@@ -21,4 +21,32 @@ public abstract class Usuario {
         this.username = username;
         this.rol = rol;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public String getApellido() {
+        return apellido;
+    }
+
+    public int getDni() {
+        return dni;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public RolDeUsuario getRol() {
+        return rol;
+    }
 }

@@ -11,6 +11,10 @@ public class Empleado extends Usuario{
         this.legajo = legajo;
     }
 
+    public int getLegajo() {
+        return legajo;
+    }
+
     //faltarian los metodos para registrar entrega o devolucion pero por ahora no sabemos si son necesarios
 
 }
