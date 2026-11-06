@@ -25,4 +25,7 @@ public abstract class Vehiculo {
     }
 
 
+    //falta el metodo abstracto para calcular el alquiler, pero para eso se necesita que exista la clase Entrega
+
+
 }

@@ -4,14 +4,15 @@ import Enums.EstadoVehiculo;
 
 public class VehiculoDeCarga extends Vehiculo{
 
-    private double capacidadDeCargaKG;
+    private double capacidadDeCargaKg;
+    private double precioPorKg;
 
-
-    public VehiculoDeCarga(int id, String patente, String marca, String modelo, int año, double kilometraje, double precioPorHora, EstadoVehiculo estadoVehiculo, double capacidadDeCargaKG) {
+    public VehiculoDeCarga(int id, String patente, String marca, String modelo, int año, double kilometraje, double precioPorHora, EstadoVehiculo estadoVehiculo, double capacidadDeCargaKg, double precioPorKg) {
         super(id, patente, marca, modelo, año, kilometraje, precioPorHora, estadoVehiculo);
-        this.capacidadDeCargaKG = capacidadDeCargaKG;
+        this.capacidadDeCargaKg = capacidadDeCargaKg;
+        this.precioPorKg = precioPorKg;
     }
 
-
+    //falta sobreescritura del metodo de vehiculo para calcular alquiler
 
 }

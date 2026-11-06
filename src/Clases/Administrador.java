@@ -12,6 +12,6 @@ public class Administrador extends Usuario{
     }
 
 
-    //debe tener un metodo para crearUsuario
+    //debe tener un metodo para crearEmpleado
 
 }
