@@ -14,4 +14,16 @@ public class Cliente extends Usuario{
         this.telefono = telefono;
         this.domicilio = domicilio;
     }
+
+    public int getNumeroDeLicencia() {
+        return numeroDeLicencia;
+    }
+
+    public int getTelefono() {
+        return telefono;
+    }
+
+    public String getDomicilio() {
+        return domicilio;
+    }
 }

@@ -15,4 +15,16 @@ public class Auto extends Vehiculo{
 
     //falta sobreescritura del metodo de vehiculo para calcular alquiler
 
+
+    @Override
+    public double calcularCostoAlquiler(Entrega entrega) {
+        double horas = entrega.calcularHoras();
+        double subtotal = horas * getPrecioPorHora();
+
+        if (ruedaDeAuxilio) {
+            subtotal *= 1.05;
+        }
+        return subtotal;
+    }
+
 }

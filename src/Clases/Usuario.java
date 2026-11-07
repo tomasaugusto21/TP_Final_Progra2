@@ -2,7 +2,7 @@ package Clases;
 
 import Enums.RolDeUsuario;
 
-public abstract class Usuario {
+public abstract class Usuario implements Identificador{
 
     private int id;
     private String nombre;
@@ -22,8 +22,9 @@ public abstract class Usuario {
         this.rol = rol;
     }
 
-    public int getId() {
-        return id;
+    @Override
+    public int getID() {
+        return 0;
     }
 
     public String getNombre() {
@@ -49,4 +50,7 @@ public abstract class Usuario {
     public RolDeUsuario getRol() {
         return rol;
     }
+
+
+
 }

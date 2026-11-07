@@ -2,7 +2,9 @@ package Clases;
 
 import Enums.EstadoVehiculo;
 
-public abstract class Vehiculo {
+import java.util.Objects;
+
+public abstract class Vehiculo implements Identificador{
 
     private int id;
     private String patente;
@@ -24,8 +26,52 @@ public abstract class Vehiculo {
         this.estadoVehiculo = estadoVehiculo;
     }
 
+    @Override
+    public int getID() {
+        return id;
+    }
 
-    //falta el metodo abstracto para calcular el alquiler, pero para eso se necesita que exista la clase Entrega
+    public String getPatente() {
+        return patente;
+    }
 
+    public String getMarca() {
+        return marca;
+    }
+
+    public String getModelo() {
+        return modelo;
+    }
+
+    public int getAño() {
+        return año;
+    }
+
+    public double getKilometraje() {
+        return kilometraje;
+    }
+
+    public double getPrecioPorHora() {
+        return precioPorHora;
+    }
+
+    public EstadoVehiculo getEstadoVehiculo() {
+        return estadoVehiculo;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Vehiculo vehiculo = (Vehiculo) o;
+        return id == vehiculo.id && Objects.equals(patente, vehiculo.patente);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, patente);
+    }
+
+    //metodo para calcular el alquiler
+    public abstract double calcularCostoAlquiler(Entrega entrega);
 
 }

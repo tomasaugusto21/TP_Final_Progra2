@@ -15,4 +15,13 @@ public class VehiculoDeCarga extends Vehiculo{
 
     //falta sobreescritura del metodo de vehiculo para calcular alquiler
 
-}
+
+    @Override
+    public double calcularCostoAlquiler(Entrega entrega) {
+        double horas = entrega.calcularHoras();
+        double kgTransportados = entrega.getKgTransportados();
+
+        return (horas * getPrecioPorHora()) + (kgTransportados * precioPorKg);
+    }
+    }
+
