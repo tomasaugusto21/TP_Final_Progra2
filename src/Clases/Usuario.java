@@ -2,7 +2,9 @@ package Clases;
 
 import Enums.RolDeUsuario;
 
-public abstract class Usuario implements Identificador{
+import java.util.Objects;
+
+public abstract class Usuario implements Identificable {
 
     private int id;
     private String nombre;
@@ -24,7 +26,7 @@ public abstract class Usuario implements Identificador{
 
     @Override
     public int getID() {
-        return 0;
+        return id;
     }
 
     public String getNombre() {
@@ -52,5 +54,16 @@ public abstract class Usuario implements Identificador{
     }
 
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Usuario usuario = (Usuario) o;
+        return Objects.equals(username, usuario.username);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(username);
+    }
+    
 }

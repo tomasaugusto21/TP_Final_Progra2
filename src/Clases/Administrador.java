@@ -9,9 +9,8 @@ public class Administrador extends Usuario{
         super(id, nombre, apellido, dni, email, username, rol);
     }
 
-
-    public void crearEmpleado() {
-        System.out.println("Administrador creando nuevo empleado.");
+    public Empleado crearEmpleado(int id, String nombre, String apellido, int dni, String email, String username, Enums.RolDeUsuario rol, int legajo) {
+        return new Empleado(id, nombre, apellido, dni, email, username, rol, legajo);
     }
 
 }

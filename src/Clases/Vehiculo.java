@@ -4,7 +4,7 @@ import Enums.EstadoVehiculo;
 
 import java.util.Objects;
 
-public abstract class Vehiculo implements Identificador{
+public abstract class Vehiculo implements Identificable {
 
     private int id;
     private String patente;
@@ -60,6 +60,20 @@ public abstract class Vehiculo implements Identificador{
     }
 
     @Override
+    public String toString() {
+        return "Vehiculo{" +
+                "id=" + id +
+                ", patente='" + patente + '\'' +
+                ", marca='" + marca + '\'' +
+                ", modelo='" + modelo + '\'' +
+                ", año=" + año +
+                ", kilometraje=" + kilometraje +
+                ", precioPorHora=" + precioPorHora +
+                ", estadoVehiculo=" + estadoVehiculo +
+                '}';
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Vehiculo vehiculo = (Vehiculo) o;
@@ -74,4 +88,10 @@ public abstract class Vehiculo implements Identificador{
     //metodo para calcular el alquiler
     public abstract double calcularCostoAlquiler(Entrega entrega);
 
+    //Método para actualizar el kilometraje
+    public void actualizarKilometraje(double kmRecorridos) {
+        if (kmRecorridos > 0) {
+            this.kilometraje += kmRecorridos;
+        }
+    }
 }

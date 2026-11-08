@@ -1,6 +1,9 @@
 package Clases;
+
 import java.time.LocalDateTime;
-public class Devolucion implements Identificador{
+import java.util.Objects;
+
+public class Devolucion {
 
     private int id;
     private int idEntrega;
@@ -19,32 +22,81 @@ public class Devolucion implements Identificador{
         this.costoTotal = costoTotal;
     }
 
-    @Override
-    public int getID() {
-        return 0;
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getIdEntrega() {
         return idEntrega;
     }
 
+    public void setIdEntrega(int idEntrega) {
+        this.idEntrega = idEntrega;
+    }
+
     public int getIdEmpleado() {
         return idEmpleado;
+    }
+
+    public void setIdEmpleado(int idEmpleado) {
+        this.idEmpleado = idEmpleado;
     }
 
     public LocalDateTime getFechaHoraDevolucion() {
         return fechaHoraDevolucion;
     }
 
+    public void setFechaHoraDevolucion(LocalDateTime fechaHoraDevolucion) {
+        this.fechaHoraDevolucion = fechaHoraDevolucion;
+    }
+
     public double getKmRecorridos() {
         return kmRecorridos;
+    }
+
+    public void setKmRecorridos(double kmRecorridos) {
+        this.kmRecorridos = kmRecorridos;
     }
 
     public double getCostoTotal() {
         return costoTotal;
     }
 
-    //metodo para calcular los km que recorrio el cliente
+    public void setCostoTotal(double costoTotal) {
+        this.costoTotal = costoTotal;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Devolucion{" +
+                "id=" + id +
+                ", idEntrega=" + idEntrega +
+                ", idEmpleado=" + idEmpleado +
+                ", fechaHoraDevolucion=" + fechaHoraDevolucion +
+                ", kmRecorridos=" + kmRecorridos +
+                ", costoTotal=" + costoTotal +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Devolucion that = (Devolucion) o;
+        return id == that.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    // Método para calcular los km que recorrió el cliente
     public double calcularKmRecorridos(double kmFinales, double kmInicial) {
         double recorridos = kmFinales - kmInicial;
 
@@ -54,4 +106,5 @@ public class Devolucion implements Identificador{
 
         return recorridos;
     }
+
 }

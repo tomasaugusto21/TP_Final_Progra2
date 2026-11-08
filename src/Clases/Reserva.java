@@ -2,9 +2,9 @@ package Clases;
 
 import Enums.EstadoReserva;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
+import java.util.Objects;
 
-public class Reserva implements Identificador{
+public class Reserva implements Identificable {
     private int id;
     private int idCliente;
     private int idVehiculo;
@@ -53,6 +53,33 @@ public class Reserva implements Identificador{
         return fechaCreacion;
     }
 
+
+
+    @Override
+    public String toString() {
+        return "Reserva{" +
+                "id=" + id +
+                ", idCliente=" + idCliente +
+                ", idVehiculo=" + idVehiculo +
+                ", fechaHoraInicio=" + fechaHoraInicio +
+                ", fechaHoraFin=" + fechaHoraFin +
+                ", estado=" + estado +
+                ", fechaCreacion=" + fechaCreacion +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Reserva reserva = (Reserva) o;
+        return id == reserva.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
+
     //METODOS
     //para cancelar una reserva
     public void cancelarReserva(){
@@ -65,16 +92,15 @@ public class Reserva implements Identificador{
     }
 
     //metodo para calcular los dias q se lo llevo
-    public long calcularDias(){
+    public int calcularDias(){
         int diaInicio = fechaHoraInicio.getDayOfMonth();
         int diaFin = fechaHoraFin.getDayOfMonth();
 
-        long dias = diaFin - diaInicio;
+        int dias = diaFin - diaInicio;
 
         if (dias <= 0) {
             dias = 1;
         }
         return dias;
     }
-
 }

@@ -1,8 +1,8 @@
 package Clases;
-import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
-public class Entrega implements Identificador{
+public class Entrega {
 
     private int id;
     private int idCliente;
@@ -29,9 +29,8 @@ public class Entrega implements Identificador{
         this.activa = true; // Arranca activa porque se acaba de entregar
     }
 
-    @Override
-    public int getID() {
-        return 0;
+    public int getId() {
+        return id;
     }
 
     public int getIdCliente() {
@@ -86,17 +85,45 @@ public class Entrega implements Identificador{
         this.activa = false;
     }
 
-   //metodo para calcular las horas del alquiler
-   public double calcularHoras() {
-       int horaEntrega = fechaHoraEntrega.getHour();
-       int horaDevolucion = fechaDevolucionPrevista.getHour();
+    @Override
+    public String toString() {
+        return "Entrega{" +
+                "id=" + id +
+                ", idCliente=" + idCliente +
+                ", idVehiculo=" + idVehiculo +
+                ", idEmpleado=" + idEmpleado +
+                ", reserva=" + reserva +
+                ", fechaHoraEntrega=" + fechaHoraEntrega +
+                ", fechaDevolucionPrevista=" + fechaDevolucionPrevista +
+                ", kmInicial=" + kmInicial +
+                ", kgTransportados=" + kgTransportados +
+                ", activa=" + activa +
+                '}';
+    }
 
-       double horas = horaDevolucion - horaEntrega;
 
-       if (horas <= 0) {
-           horas = 1.0; // Mínimo 1 hora de cobro
-       }
-       return horas;
-   }
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Entrega entrega = (Entrega) o;
+        return id == entrega.id;
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
+
+    //metodo para calcular las horas del alquiler
+    public double calcularHoras() {
+        int horaEntrega = fechaHoraEntrega.getHour();
+        int horaDevolucion = fechaDevolucionPrevista.getHour();
+
+        double horas = horaDevolucion - horaEntrega;
+
+        if (horas <= 0) {
+            horas = 1.0; // Mínimo 1 hora de cobro
+        }
+        return horas;
+    }
 }

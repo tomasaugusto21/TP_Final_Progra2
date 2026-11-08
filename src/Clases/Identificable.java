@@ -1,5 +1,5 @@
 package Clases;
 
-public interface Identificador {
+public interface Identificable {
     int getID();
 }
