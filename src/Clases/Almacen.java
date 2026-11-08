@@ -30,6 +30,16 @@ public class Almacen <T extends Identificador>{
         return new ArrayList<>(elementos.values());
     }
 
+    public <E extends T> List<E> listarDeTipo(Class<E> tipo) {
+        List<E> resultado = new ArrayList<>();
+        for (T elemento : elementos.values()) {
+            if (tipo.isInstance(elemento)) {
+                resultado.add(tipo.cast(elemento));
+            }
+        }
+        return resultado;
+    }
+
     //devuelve todo
     public Map<Integer, T> getElementos() {
         return elementos;
