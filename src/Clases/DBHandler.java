@@ -88,9 +88,105 @@ public class DBHandler {
                 filas_alteradas = statement.executeUpdate();
             }
 
-            return filas_alteradas;
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return filas_alteradas;
     }
+
+    public int actualizar_kilometraje(int id_actualizar, double kilometraje_nuevo) {
+        int filas_alteradas = 0;
+        String UPDATE_QUERY = "UPDATE vehiculo SET kilometraje = ? WHERE id = ?";
+
+        try (Connection connection = DriverManager.getConnection(url);
+             PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY)) {
+
+            statement.setDouble(1, kilometraje_nuevo);
+            statement.setInt(2, id_actualizar);
+
+            filas_alteradas = statement.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return filas_alteradas;
+    }
+
+    public int actualizar_precio_x_hora(int id_actualizar, double precio_por_hora_nuevo) {
+
+        int filas_alteradas = 0;
+        String UPDATE_QUERY = "UPDATE vehiculos SET precio_por_hora = ? WHERE id = ?";
+
+        try (Connection connection = DriverManager.getConnection(url);
+             PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY)) {
+
+            statement.setDouble(1, precio_por_hora_nuevo);
+            statement.setInt(2, id_actualizar);
+
+            filas_alteradas = statement.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return filas_alteradas;
+    }
+
+    public int actualizar_rueda_auxilio(int id_actualizar, boolean rueda_auxilio) {
+        int filas_alteradas = 0;
+        String UPDATE_QUERY = "UPDATE auto SET tiene_rueda_auxilio = ? WHERE id = ?";
+
+        try (Connection connection = DriverManager.getConnection(url);
+             PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY)) {
+
+            statement.setInt(1,rueda_auxilio ? 1:0);
+            statement.setInt(2,id_actualizar);
+
+            filas_alteradas = statement.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return filas_alteradas;
+    }
+
+    public int actualizar_precio_x_kg(int id_actualizar ,double precio_nuevo){
+        int filas_alteradas =0;
+        String UPDATE_QUERY = "UPDATE vehiculo_de_carga  SET precio_por_kg = ? WHERE id = ?";
+
+        try(Connection connection = DriverManager.getConnection(url);
+        PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY)){
+
+            statement.setDouble(1,precio_nuevo);
+            statement.setInt(2,id_actualizar);
+
+            filas_alteradas = statement.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return filas_alteradas;
+    }
+    public int actualizar_capacidad_carga (int id_actualizar, double capacidad_nueva){
+        int filas_alteradas = 0;
+        String UPDATE_QUERY = "UPDATE vehiculo_de_carga SET capacidad_carga = ? WHERE id = ?";
+
+        try (Connection connection = DriverManager.getConnection(url);
+        PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY)){
+
+            statement.setDouble(1,capacidad_nueva);
+            statement.setInt(2,id_actualizar);
+
+            filas_alteradas = statement.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return filas_alteradas;
+    }
+
+
+    
+
+
 }
