@@ -13,6 +13,13 @@ public class VehiculoDeCarga extends Vehiculo{
         this.precioPorKg = precioPorKg;
     }
 
+    public double getCapacidadDeCargaKg() {
+        return capacidadDeCargaKg;
+    }
+
+    public double getPrecioPorKg() {
+        return precioPorKg;
+    }
     //falta sobreescritura del metodo de vehiculo para calcular alquiler
 
 

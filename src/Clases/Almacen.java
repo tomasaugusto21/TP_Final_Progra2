@@ -28,6 +28,7 @@ public class Almacen <T extends Identificable>{
         }
 
         elementos.put(elemento.getID(), elemento);
+
     }
 
     public void eliminar(int id) throws ValidacionEx {

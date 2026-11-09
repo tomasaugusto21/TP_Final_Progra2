@@ -13,6 +13,14 @@ public class Auto extends Vehiculo{
         this.ruedaDeAuxilio = ruedaDeAuxilio;
     }
 
+    public int getCantidadDePuertas() {
+        return cantidadDePuertas;
+    }
+
+    public boolean isRuedaDeAuxilio() {
+        return ruedaDeAuxilio;
+    }
+
     //falta sobreescritura del metodo de vehiculo para calcular alquiler
 
 
