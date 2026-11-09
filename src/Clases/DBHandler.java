@@ -68,40 +68,29 @@ public class DBHandler {
         }
     }
 
+    public int borrar_vehiculo_id(int id_eliminar) {
+        int filas_alteradas = 0;
+        String DELETE_QUERY = "DELETE FROM vehiculo WHERE id = ?";
+        String DELETE_QUERY_AUTO = "DELETE FROM auto WHERE id = ?";
+        String DELETE_QUERY_VEHICULO_CARGA = "DELETE FROM vehiculo_de_carga WHERE id = ?";
 
-    public void borrar_vehiculo_por_patente(String patente_a_eliminar) {
-
-        String SELECT_QUERY_PATENTE = "SELECT id FROM vehiculo WHERE patente = ?";
-        String DELETE_QUERY_AUTO = "DELETE auto WHERE id = ?";
-        String DELETE_QUERY_VEHICULO_CARGA = "DELETE vehiculo_de_carga WHERE id = ?";
-
-
-        try (Connection connection = DriverManager.getConnection(url);
-             PreparedStatement statement = connection.prepareStatement(SELECT_QUERY_PATENTE)) {
-
-            statement.setString(1, patente_a_eliminar);
-
-            try (ResultSet result = statement.executeQuery()) {
-                if (result.next()) {
-                    int id = result.getInt("id");
-                    try (PreparedStatement statement_eliminar_auto = connection.prepareStatement(DELETE_QUERY_AUTO)) {
-                        statement_eliminar_auto.setInt(1, id);
-                        statement_eliminar_auto.executeUpdate();
-                    }
-                    try (PreparedStatement statement_eliminar_vehiculo_carga = connection.prepareStatement(DELETE_QUERY_VEHICULO_CARGA)) {
-                        statement_eliminar_vehiculo_carga.setInt(1, id);
-                        statement_eliminar_vehiculo_carga.executeUpdate();
-
-                    }
-
-                }
-
+        try (Connection connection = DriverManager.getConnection(url)) {
+            try (PreparedStatement statement_borrar_hija_auto = connection.prepareStatement(DELETE_QUERY_AUTO)) {
+                statement_borrar_hija_auto.setInt(1, id_eliminar);
+                statement_borrar_hija_auto.executeUpdate();
+            }
+            try (PreparedStatement statement_borrar_hija_VCarga = connection.prepareStatement(DELETE_QUERY_VEHICULO_CARGA)) {
+                statement_borrar_hija_VCarga.setInt(1, id_eliminar);
+                statement_borrar_hija_VCarga.executeUpdate();
+            }
+            try (PreparedStatement statement = connection.prepareStatement(DELETE_QUERY)) {
+                statement.setInt(1, id_eliminar);
+                filas_alteradas = statement.executeUpdate();
             }
 
-
+            return filas_alteradas;
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
     }
 }
