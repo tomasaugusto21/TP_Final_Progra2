@@ -47,15 +47,16 @@ public class DBHandler {
 
                         try (PreparedStatement statementVehiculoCarga = connection.prepareStatement(INSERT_QUERY_VEHICULO_CARGA)) {
 
-                            statementVehiculoCarga.setInt(1,id);
-                            statementVehiculoCarga.setDouble(2,vehiculoDeCarga.getPrecioPorKg());
-                            statementVehiculoCarga.setDouble(3,vehiculoDeCarga.getCapacidadDeCargaKg());
+                            statementVehiculoCarga.setInt(1, id);
+                            statementVehiculoCarga.setDouble(2, vehiculoDeCarga.getPrecioPorKg());
+                            statementVehiculoCarga.setDouble(3, vehiculoDeCarga.getCapacidadDeCargaKg());
 
                             statementVehiculoCarga.executeUpdate();
                         }
                     }
 
-                }else{
+                } else {
+                    //falta agarrarlo por eso tira error.
                     throw new ErrorDeCargaEx("ERROR: No se logro obtener el identificador del vehiculo");
                 }
 
@@ -65,5 +66,42 @@ public class DBHandler {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+
+    public void borrar_vehiculo_por_patente(String patente_a_eliminar) {
+
+        String SELECT_QUERY_PATENTE = "SELECT id FROM vehiculo WHERE patente = ?";
+        String DELETE_QUERY_AUTO = "DELETE auto WHERE id = ?";
+        String DELETE_QUERY_VEHICULO_CARGA = "DELETE vehiculo_de_carga WHERE id = ?";
+
+
+        try (Connection connection = DriverManager.getConnection(url);
+             PreparedStatement statement = connection.prepareStatement(SELECT_QUERY_PATENTE)) {
+
+            statement.setString(1, patente_a_eliminar);
+
+            try (ResultSet result = statement.executeQuery()) {
+                if (result.next()) {
+                    int id = result.getInt("id");
+                    try (PreparedStatement statement_eliminar_auto = connection.prepareStatement(DELETE_QUERY_AUTO)) {
+                        statement_eliminar_auto.setInt(1, id);
+                        statement_eliminar_auto.executeUpdate();
+                    }
+                    try (PreparedStatement statement_eliminar_vehiculo_carga = connection.prepareStatement(DELETE_QUERY_VEHICULO_CARGA)) {
+                        statement_eliminar_vehiculo_carga.setInt(1, id);
+                        statement_eliminar_vehiculo_carga.executeUpdate();
+
+                    }
+
+                }
+
+            }
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
     }
 }
