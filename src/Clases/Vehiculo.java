@@ -10,17 +10,17 @@ public abstract class Vehiculo implements Identificable {
     private String patente;
     private String marca;
     private String modelo;
-    private int año;
+    private int anio;
     private double kilometraje;
     private double precioPorHora;
     private EstadoVehiculo estadoVehiculo;
 
-    public Vehiculo(int id, String patente, String marca, String modelo, int año, double kilometraje, double precioPorHora, EstadoVehiculo estadoVehiculo) {
+    public Vehiculo(int id, String patente, String marca, String modelo, int anio, double kilometraje, double precioPorHora, EstadoVehiculo estadoVehiculo) {
         this.id = id;
         this.patente = patente;
         this.marca = marca;
         this.modelo = modelo;
-        this.año = año;
+        this.anio = anio;
         this.kilometraje = kilometraje;
         this.precioPorHora = precioPorHora;
         this.estadoVehiculo = estadoVehiculo;
@@ -43,8 +43,8 @@ public abstract class Vehiculo implements Identificable {
         return modelo;
     }
 
-    public int getAño() {
-        return año;
+    public int getAnio() {
+        return anio;
     }
 
     public double getKilometraje() {
@@ -66,7 +66,7 @@ public abstract class Vehiculo implements Identificable {
                 ", patente='" + patente + '\'' +
                 ", marca='" + marca + '\'' +
                 ", modelo='" + modelo + '\'' +
-                ", año=" + año +
+                ", año=" + anio +
                 ", kilometraje=" + kilometraje +
                 ", precioPorHora=" + precioPorHora +
                 ", estadoVehiculo=" + estadoVehiculo +
