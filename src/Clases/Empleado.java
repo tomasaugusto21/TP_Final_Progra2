@@ -4,14 +4,14 @@ import Enums.RolDeUsuario;
 
 public class Empleado extends Usuario{
 
-    private int legajo;
+    private String legajo;
 
-    public Empleado(int id, String nombre, String apellido, int dni, String email, String username, RolDeUsuario rol, int legajo) {
+    public Empleado(int id, String nombre, String apellido, int dni, String email, String username, RolDeUsuario rol, String legajo) {
         super(id, nombre, apellido, dni, email, username, rol);
         this.legajo = legajo;
     }
 
-    public int getLegajo() {
+    public String getLegajo() {
         return legajo;
     }
 

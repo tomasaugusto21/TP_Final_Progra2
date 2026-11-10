@@ -42,7 +42,7 @@ public class DBHandler {
 
                             int filasAfectadas = statementAuto.executeUpdate();
 
-                            if (filasAfectadas == 1){
+                            if (filasAfectadas == 1) {
                                 agregado = true;
                             }
                         }
@@ -58,7 +58,7 @@ public class DBHandler {
 
                             int filasAfectadas = statementVehiculoCarga.executeUpdate();
 
-                            if (filasAfectadas == 1){
+                            if (filasAfectadas == 1) {
                                 agregado = true;
                             }
                         }
@@ -78,33 +78,9 @@ public class DBHandler {
         return agregado;
     }
 
-    //la idea no es que se eliminen los vehiculos porque se perderian datos en los registros, sino que los damos de baja
-    public static int borrar_vehiculo_id(int id_eliminar) {
-        int filas_alteradas = 0;
-        String DELETE_QUERY = "DELETE FROM vehiculo WHERE id = ?";
-        String DELETE_QUERY_AUTO = "DELETE FROM auto WHERE id = ?";
-        String DELETE_QUERY_VEHICULO_CARGA = "DELETE FROM vehiculo_de_carga WHERE id = ?";
+    ///la idea no es que se eliminen los vehiculos porque se perderian datos en los registros, sino que los damos de baja
+    //public static int cambiar_estado(int id_cambiar) {}
 
-        try (Connection connection = DriverManager.getConnection(url)) {
-            try (PreparedStatement statement_borrar_hija_auto = connection.prepareStatement(DELETE_QUERY_AUTO)) {
-                statement_borrar_hija_auto.setInt(1, id_eliminar);
-                statement_borrar_hija_auto.executeUpdate();
-            }
-            try (PreparedStatement statement_borrar_hija_VCarga = connection.prepareStatement(DELETE_QUERY_VEHICULO_CARGA)) {
-                statement_borrar_hija_VCarga.setInt(1, id_eliminar);
-                statement_borrar_hija_VCarga.executeUpdate();
-            }
-            try (PreparedStatement statement = connection.prepareStatement(DELETE_QUERY)) {
-                statement.setInt(1, id_eliminar);
-                filas_alteradas = statement.executeUpdate();
-            }
-
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return filas_alteradas;
-    }
 
     public static int actualizar_kilometraje(int id_actualizar, double kilometraje_nuevo) {
         int filas_alteradas = 0;
@@ -150,8 +126,8 @@ public class DBHandler {
         try (Connection connection = DriverManager.getConnection(url);
              PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY)) {
 
-            statement.setInt(1,rueda_auxilio ? 1:0);
-            statement.setInt(2,id_actualizar);
+            statement.setInt(1, rueda_auxilio ? 1 : 0);
+            statement.setInt(2, id_actualizar);
 
             filas_alteradas = statement.executeUpdate();
 
@@ -161,15 +137,15 @@ public class DBHandler {
         return filas_alteradas;
     }
 
-    public static int actualizar_precio_x_kg(int id_actualizar ,double precio_nuevo){
-        int filas_alteradas =0;
+    public static int actualizar_precio_x_kg(int id_actualizar, double precio_nuevo) {
+        int filas_alteradas = 0;
         String UPDATE_QUERY = "UPDATE vehiculo_de_carga  SET precio_por_kg = ? WHERE id = ?";
 
-        try(Connection connection = DriverManager.getConnection(url);
-        PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY)){
+        try (Connection connection = DriverManager.getConnection(url);
+             PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY)) {
 
-            statement.setDouble(1,precio_nuevo);
-            statement.setInt(2,id_actualizar);
+            statement.setDouble(1, precio_nuevo);
+            statement.setInt(2, id_actualizar);
 
             filas_alteradas = statement.executeUpdate();
 
@@ -178,15 +154,16 @@ public class DBHandler {
         }
         return filas_alteradas;
     }
-    public static int actualizar_capacidad_carga (int id_actualizar, double capacidad_nueva){
+
+    public static int actualizar_capacidad_carga(int id_actualizar, double capacidad_nueva) {
         int filas_alteradas = 0;
         String UPDATE_QUERY = "UPDATE vehiculo_de_carga SET capacidad_carga = ? WHERE id = ?";
 
         try (Connection connection = DriverManager.getConnection(url);
-        PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY)){
+             PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY)) {
 
-            statement.setDouble(1,capacidad_nueva);
-            statement.setInt(2,id_actualizar);
+            statement.setDouble(1, capacidad_nueva);
+            statement.setInt(2, id_actualizar);
 
             filas_alteradas = statement.executeUpdate();
 
@@ -196,8 +173,71 @@ public class DBHandler {
         return filas_alteradas;
     }
 
+    public static boolean agregar_usuario(Usuario usuario, String password) {
 
-    
+        boolean agregado = false;
 
+        String INSERT_QUERY = "INSERT INTO usuario(nombre,apellido,dni,email,username,password,rol)VALUES(?,?,?,?,?,?,?)";
+        String INSERT_QUERY_EMPLEADO = "INSERT INTO empleado(id,legajo,)VALUES(?,?)";
+        String INSERT_QUERY_CLIENTE = "INSERT INTO cliente(id,nro_licencia,telefono,domicilio)VALUES(?,?,?,?)";
+
+        try (Connection connection = DriverManager.getConnection(url);
+             PreparedStatement statement = connection.prepareStatement(INSERT_QUERY, Statement.RETURN_GENERATED_KEYS)) {
+
+            statement.setString(1, usuario.getNombre());
+            statement.setString(2, usuario.getApellido());
+            statement.setInt(3, usuario.getDni());
+            statement.setString(4, usuario.getEmail());
+            statement.setString(5, usuario.getUsername());
+            statement.setString(6, password);
+            statement.setString(7, usuario.getRol().name());
+
+            statement.executeUpdate();
+
+            try (ResultSet result = statement.getGeneratedKeys()) {
+                if (result.next()) {
+                    int id = result.getInt("id");
+
+                    if (usuario instanceof Empleado) {
+                        Empleado empleado = (Empleado) usuario;
+
+                        try (PreparedStatement statement_empleado = connection.prepareStatement(INSERT_QUERY_EMPLEADO)) {
+
+                            statement_empleado.setInt(1, id);
+                            statement_empleado.setString(2, empleado.getLegajo());
+                            int filas_agregadas = statement_empleado.executeUpdate();
+                            if (filas_agregadas >= 1) {
+                                agregado = true;
+                            }
+                        }
+                    }
+                    if(usuario instanceof Cliente){
+                        Cliente cliente = (Cliente) usuario;
+
+                        try(PreparedStatement statement_cliente = connection.prepareStatement(INSERT_QUERY_CLIENTE)){
+
+                            statement_cliente.setInt(1,id);
+                            statement_cliente.setString(2,cliente.getNumeroDeLicencia());
+                            statement_cliente.setString(3,cliente.getTelefono());
+                            statement_cliente.setString(4,cliente.getDomicilio());
+
+
+                            int filas_agregadas = statement_cliente.executeUpdate();
+                            if (filas_agregadas >= 1) {
+                                agregado = true;
+                            }
+                        }
+                    }
+                }
+
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return agregado;
+    }
+
+        
 
 }

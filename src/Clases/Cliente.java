@@ -4,22 +4,22 @@ import Enums.RolDeUsuario;
 
 public class Cliente extends Usuario{
 
-    private int numeroDeLicencia;
-    private int telefono;
+    private String numeroDeLicencia;
+    private String telefono;
     private String domicilio;
 
-    public Cliente(int id, String nombre, String apellido, int dni, String email, String username, RolDeUsuario rol, int numeroDeLicencia, int telefono, String domicilio) {
+    public Cliente(int id, String nombre, String apellido, int dni, String email, String username, RolDeUsuario rol, String numeroDeLicencia, String telefono, String domicilio) {
         super(id, nombre, apellido, dni, email, username, rol);
         this.numeroDeLicencia = numeroDeLicencia;
         this.telefono = telefono;
         this.domicilio = domicilio;
     }
 
-    public int getNumeroDeLicencia() {
+    public String getNumeroDeLicencia() {
         return numeroDeLicencia;
     }
 
-    public int getTelefono() {
+    public String getTelefono() {
         return telefono;
     }
 

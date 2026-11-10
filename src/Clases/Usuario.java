@@ -24,6 +24,20 @@ public abstract class Usuario implements Identificable {
         this.rol = rol;
     }
 
+    public Usuario(String nombre, String apellido, int dni, String email, String username, RolDeUsuario rol) {
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.dni = dni;
+        this.email = email;
+        this.username = username;
+
+        this.rol = rol;
+    }
+
+    protected void setId(int id) {
+        this.id = id;
+    }
+
     @Override
     public int getID() {
         return id;
@@ -65,5 +79,5 @@ public abstract class Usuario implements Identificable {
     public int hashCode() {
         return Objects.hashCode(username);
     }
-    
+
 }
