@@ -8,23 +8,23 @@ public class Entrega {
     private int idCliente;
     private int idVehiculo;
     private int idEmpleado;
-    private Reserva reserva; // Puede ser null si alquila sin reserva previa
+    private int idReserva; // Puede ser null si alquila sin reserva previa
     private LocalDateTime fechaHoraEntrega;
     private LocalDateTime fechaDevolucionPrevista;
-    private double kmInicial;
+    private double kmEntrega;
     private double kgTransportados;
     private boolean activa;
 
-    public Entrega(int id,int idCliente,int idVehiculo,int idEmpleado,Reserva reserva,LocalDateTime fechaHoraEntrega,LocalDateTime fechaDevolucionPrevista,double kmInicial,double kgTransportados,boolean activa){
+    public Entrega(int id,int idCliente,int idVehiculo,int idEmpleado,int idReserva,LocalDateTime fechaHoraEntrega,LocalDateTime fechaDevolucionPrevista,double kmEntrega,double kgTransportados,boolean activa){
 
         this.id = id;
         this.idCliente = idCliente;
         this.idVehiculo = idVehiculo;
         this.idEmpleado = idEmpleado;
-        this.reserva = reserva;
+        this.idReserva = idReserva;
         this.fechaHoraEntrega = LocalDateTime.now(); // Se toma la hora actual del sistema
         this.fechaDevolucionPrevista = fechaDevolucionPrevista;
-        this.kmInicial = kmInicial;
+        this.kmEntrega = kmEntrega;
         this.kgTransportados = kgTransportados;
         this.activa = true; // Arranca activa porque se acaba de entregar
     }
@@ -45,8 +45,8 @@ public class Entrega {
         return idEmpleado;
     }
 
-    public Reserva getReserva() {
-        return reserva;
+    public int getIdReserva() {
+        return idReserva;
     }
 
     public LocalDateTime getFechaHoraEntrega() {
@@ -57,8 +57,8 @@ public class Entrega {
         return fechaDevolucionPrevista;
     }
 
-    public double getKmInicial() {
-        return kmInicial;
+    public double getKmEntrega() {
+        return kmEntrega;
     }
 
     public double getKgTransportados() {
@@ -76,8 +76,8 @@ public class Entrega {
         this.fechaDevolucionPrevista = fechaDevolucionPrevista;
     }
 
-    public void setKmInicial(double kmInicial) {
-        this.kmInicial = kmInicial;
+    public void setKmEntrega(double kmEntrega) {
+        this.kmEntrega = kmEntrega;
     }
 
     //Métodopara mostrar que el auto ya fue devuelto
@@ -92,10 +92,10 @@ public class Entrega {
                 ", idCliente=" + idCliente +
                 ", idVehiculo=" + idVehiculo +
                 ", idEmpleado=" + idEmpleado +
-                ", reserva=" + reserva +
+                ", idReserva=" + idReserva +
                 ", fechaHoraEntrega=" + fechaHoraEntrega +
                 ", fechaDevolucionPrevista=" + fechaDevolucionPrevista +
-                ", kmInicial=" + kmInicial +
+                ", kmEntrega=" + kmEntrega +
                 ", kgTransportados=" + kgTransportados +
                 ", activa=" + activa +
                 '}';

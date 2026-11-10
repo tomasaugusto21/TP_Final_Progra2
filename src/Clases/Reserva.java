@@ -8,22 +8,35 @@ public class Reserva implements Identificable {
     private int id;
     private int idCliente;
     private int idVehiculo;
-    private LocalDateTime fechaHoraInicio;
-    private LocalDateTime fechaHoraFin;
+    private LocalDateTime horaInicio;
+    private LocalDateTime horaFin;
+    private LocalDateTime fechaInicio;
+    private LocalDateTime fechaFin;
     private EstadoReserva estado;
     private LocalDateTime fechaCreacion;
 
 
-    public Reserva(int id, int idCliente, int idVehiculo, LocalDateTime fechaHoraInicio, LocalDateTime fechaHoraFin){
+    public Reserva(int id, int idCliente, int idVehiculo, LocalDateTime horaInicio, LocalDateTime horaFin,LocalDateTime fechaInicio, LocalDateTime fechaFin){
         this.id = id;
         this.idCliente = idCliente;
         this.idVehiculo = idVehiculo;
-        this.fechaHoraInicio = fechaHoraInicio;
-        this.fechaHoraFin = fechaHoraFin;
+        this.horaInicio = horaInicio;
+        this.horaFin = horaFin;
+        this.fechaInicio = fechaInicio;
+        this.fechaFin = fechaFin;
         this.estado = EstadoReserva.VIGENTE; // Toda reserva nace activa
         this.fechaCreacion = LocalDateTime.now(); // Guarda cuándo se creó en el sistema
     }
-
+    public Reserva(int idCliente, int idVehiculo, LocalDateTime horaInicio, LocalDateTime horaFin,LocalDateTime fechaInicio, LocalDateTime fechaFin){
+        this.idCliente = idCliente;
+        this.idVehiculo = idVehiculo;
+        this.horaInicio = horaInicio;
+        this.horaFin = horaFin;
+        this.fechaInicio = fechaInicio;
+        this.fechaFin = fechaFin;
+        this.estado = EstadoReserva.VIGENTE; // Toda reserva nace activa
+        this.fechaCreacion = LocalDateTime.now(); // Guarda cuándo se creó en el sistema
+    }
     @Override
     public int getID() {
         return id;
@@ -37,12 +50,20 @@ public class Reserva implements Identificable {
         return idVehiculo;
     }
 
-    public LocalDateTime getFechaHoraInicio() {
-        return fechaHoraInicio;
+    public LocalDateTime getHoraInicio() {
+        return horaInicio;
     }
 
-    public LocalDateTime getFechaHoraFin() {
-        return fechaHoraFin;
+    public LocalDateTime getHoraFin() {
+        return horaFin;
+    }
+
+    public LocalDateTime getFechaInicio() {
+        return fechaInicio;
+    }
+
+    public LocalDateTime getFechaFin() {
+        return fechaFin;
     }
 
     public EstadoReserva getEstado() {
@@ -54,15 +75,16 @@ public class Reserva implements Identificable {
     }
 
 
-
     @Override
     public String toString() {
         return "Reserva{" +
                 "id=" + id +
                 ", idCliente=" + idCliente +
                 ", idVehiculo=" + idVehiculo +
-                ", fechaHoraInicio=" + fechaHoraInicio +
-                ", fechaHoraFin=" + fechaHoraFin +
+                ", horaInicio=" + horaInicio +
+                ", horaFin=" + horaFin +
+                ", fechaInicio=" + fechaInicio +
+                ", fechaFin=" + fechaFin +
                 ", estado=" + estado +
                 ", fechaCreacion=" + fechaCreacion +
                 '}';
@@ -91,16 +113,4 @@ public class Reserva implements Identificable {
         this.estado = EstadoReserva.FINALIZADA;
     }
 
-    //metodo para calcular los dias q se lo llevo
-    public int calcularDias(){
-        int diaInicio = fechaHoraInicio.getDayOfMonth();
-        int diaFin = fechaHoraFin.getDayOfMonth();
-
-        int dias = diaFin - diaInicio;
-
-        if (dias <= 0) {
-            dias = 1;
-        }
-        return dias;
-    }
 }
