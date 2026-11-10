@@ -153,7 +153,18 @@ public class GestorVehiculos {
         return false;
     }
 
+    public boolean cambiarEstadoVehiculo (String patente, EstadoVehiculo estadoNuevo) throws ObjetoNoEncontradoEx, ValidacionEx {
 
+        Vehiculo buscado = buscarVehiculoPorPatente(patente);
+
+        int idBuscada = buscado.getID();
+
+        if (DBHandler.cambiar_estado(idBuscada,estadoNuevo)==1){
+            buscado.setEstadoVehiculo(estadoNuevo);
+            return true;
+        }
+        return false;
+    }
 
     public Vehiculo buscarVehiculoPorPatente (String patente) throws ObjetoNoEncontradoEx, ValidacionEx {
 

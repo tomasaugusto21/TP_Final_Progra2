@@ -73,7 +73,9 @@ public abstract class Vehiculo implements Identificable {
         this.precioPorHora = precioPorHora;
     }
 
-
+    public void setEstadoVehiculo(EstadoVehiculo estadoVehiculo) {
+        this.estadoVehiculo = estadoVehiculo;
+    }
 
     protected void setId(int id) {
         this.id = id;
