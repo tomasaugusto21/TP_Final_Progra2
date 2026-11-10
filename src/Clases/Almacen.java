@@ -1,5 +1,6 @@
 package Clases;
 
+import Excepciones.ObjetoDuplicadoEx;
 import Excepciones.ObjetoInvalidoEx;
 import Excepciones.ValidacionEx;
 
@@ -16,15 +17,17 @@ public class Almacen <T extends Identificable>{
         this.elementos = new HashMap<>();
     }
 
-    public void agregar(T elemento) throws ObjetoInvalidoEx, ValidacionEx {
+    public void agregar(T elemento) throws ObjetoInvalidoEx, ValidacionEx, ObjetoDuplicadoEx {
         if (elemento == null) {
             throw new ObjetoInvalidoEx("El elemento no puede ser nulo.");
         }
 
-        for (T e : elementos.values()) {
-            if (e.getID() == elemento.getID()) {
-                throw new ValidacionEx("Ya existe un registro con el ID: " + elemento.getID());
-            }
+        if (elementos.containsValue(elemento)){
+            throw new ObjetoDuplicadoEx("El elemento que se intentó agregar ya existe en el almacen");
+        }
+
+        if (elementos.containsKey(elemento.getID())){
+            throw new ObjetoDuplicadoEx("El ID del elemento a agregar ya existe en el almacen");
         }
 
         elementos.put(elemento.getID(), elemento);
@@ -68,6 +71,10 @@ public class Almacen <T extends Identificable>{
             }
         }
         return resultado;
+    }
+
+    public boolean verificarExistencia (T obj){
+        return elementos.containsValue(obj);
     }
 
     public Map<Integer, T> getElementos() {

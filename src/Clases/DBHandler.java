@@ -1,21 +1,22 @@
 package Clases;
 
-import Enums.EstadoVehiculo;
 import Excepciones.ErrorDeCargaEx;
 
 import java.sql.*;
 
 public class DBHandler {
-    private static final String url = "jdbc:sqlite:alquiler";
+    private static final String url = "jdbc:sqlite:alquiler.db?foreign_keys=on";
 
-    public void agregar_vehiculo(Vehiculo vehiculo) {
+    public static boolean agregar_vehiculo(Vehiculo vehiculo) {
 
-        String INSERT_QUERY = "INSERT INTO vehiculo(patente,marca,modelo,anio,kilometraje,precioPorHora,estadoVehiculo)VALUES(?,?,?,?,?,?,?)";
+        boolean agregado = false;
+
+        String INSERT_QUERY = "INSERT INTO vehiculo(patente,marca,modelo,anio,kilometraje,precio_por_hora,estado)VALUES(?,?,?,?,?,?,?)";
         String INSERT_QUERY_AUTO = "INSERT INTO auto(id,cantidad_puertas,tiene_rueda_auxilio)VALUES(?,?,?)";
         String INSERT_QUERY_VEHICULO_CARGA = "INSERT INTO vehiculo_de_carga(id,precio_por_kg,capacidad_carga)VALUES(?,?,?)";
 
         try (Connection connection = DriverManager.getConnection(url);
-             PreparedStatement statement = connection.prepareStatement(INSERT_QUERY)) {
+             PreparedStatement statement = connection.prepareStatement(INSERT_QUERY, Statement.RETURN_GENERATED_KEYS)) {
 
             statement.setString(1, vehiculo.getPatente());
             statement.setString(2, vehiculo.getMarca());
@@ -39,7 +40,11 @@ public class DBHandler {
                             statementAuto.setInt(2, auto.getCantidadDePuertas());
                             statementAuto.setInt(3, auto.isRuedaDeAuxilio() ? 1 : 0);
 
-                            statementAuto.executeUpdate();
+                            int filasAfectadas = statementAuto.executeUpdate();
+
+                            if (filasAfectadas == 1){
+                                agregado = true;
+                            }
                         }
                     }
                     if (vehiculo instanceof VehiculoDeCarga) {
@@ -51,7 +56,11 @@ public class DBHandler {
                             statementVehiculoCarga.setDouble(2, vehiculoDeCarga.getPrecioPorKg());
                             statementVehiculoCarga.setDouble(3, vehiculoDeCarga.getCapacidadDeCargaKg());
 
-                            statementVehiculoCarga.executeUpdate();
+                            int filasAfectadas = statementVehiculoCarga.executeUpdate();
+
+                            if (filasAfectadas == 1){
+                                agregado = true;
+                            }
                         }
                     }
 
@@ -66,9 +75,11 @@ public class DBHandler {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return agregado;
     }
 
-    public int borrar_vehiculo_id(int id_eliminar) {
+    //la idea no es que se eliminen los vehiculos porque se perderian datos en los registros, sino que los damos de baja
+    public static int borrar_vehiculo_id(int id_eliminar) {
         int filas_alteradas = 0;
         String DELETE_QUERY = "DELETE FROM vehiculo WHERE id = ?";
         String DELETE_QUERY_AUTO = "DELETE FROM auto WHERE id = ?";
@@ -95,7 +106,7 @@ public class DBHandler {
         return filas_alteradas;
     }
 
-    public int actualizar_kilometraje(int id_actualizar, double kilometraje_nuevo) {
+    public static int actualizar_kilometraje(int id_actualizar, double kilometraje_nuevo) {
         int filas_alteradas = 0;
         String UPDATE_QUERY = "UPDATE vehiculo SET kilometraje = ? WHERE id = ?";
 
@@ -113,7 +124,7 @@ public class DBHandler {
         return filas_alteradas;
     }
 
-    public int actualizar_precio_x_hora(int id_actualizar, double precio_por_hora_nuevo) {
+    public static int actualizar_precio_x_hora(int id_actualizar, double precio_por_hora_nuevo) {
 
         int filas_alteradas = 0;
         String UPDATE_QUERY = "UPDATE vehiculos SET precio_por_hora = ? WHERE id = ?";
@@ -132,7 +143,7 @@ public class DBHandler {
         return filas_alteradas;
     }
 
-    public int actualizar_rueda_auxilio(int id_actualizar, boolean rueda_auxilio) {
+    public static int actualizar_rueda_auxilio(int id_actualizar, boolean rueda_auxilio) {
         int filas_alteradas = 0;
         String UPDATE_QUERY = "UPDATE auto SET tiene_rueda_auxilio = ? WHERE id = ?";
 
@@ -150,7 +161,7 @@ public class DBHandler {
         return filas_alteradas;
     }
 
-    public int actualizar_precio_x_kg(int id_actualizar ,double precio_nuevo){
+    public static int actualizar_precio_x_kg(int id_actualizar ,double precio_nuevo){
         int filas_alteradas =0;
         String UPDATE_QUERY = "UPDATE vehiculo_de_carga  SET precio_por_kg = ? WHERE id = ?";
 
@@ -167,7 +178,7 @@ public class DBHandler {
         }
         return filas_alteradas;
     }
-    public int actualizar_capacidad_carga (int id_actualizar, double capacidad_nueva){
+    public static int actualizar_capacidad_carga (int id_actualizar, double capacidad_nueva){
         int filas_alteradas = 0;
         String UPDATE_QUERY = "UPDATE vehiculo_de_carga SET capacidad_carga = ? WHERE id = ?";
 

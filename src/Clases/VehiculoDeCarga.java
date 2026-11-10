@@ -26,8 +26,10 @@ public class VehiculoDeCarga extends Vehiculo{
     public double getPrecioPorKg() {
         return precioPorKg;
     }
-    //falta sobreescritura del metodo de vehiculo para calcular alquiler
 
+    public void setPrecioPorKg(double precioPorKg) {
+        this.precioPorKg = precioPorKg;
+    }
 
     @Override
     public double calcularCostoAlquiler(Entrega entrega) {

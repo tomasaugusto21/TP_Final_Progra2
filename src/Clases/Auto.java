@@ -27,7 +27,10 @@ public class Auto extends Vehiculo{
         return ruedaDeAuxilio;
     }
 
-    //falta sobreescritura del metodo de vehiculo para calcular alquiler
+    public void setRuedaDeAuxilio(boolean ruedaDeAuxilio) {
+        this.ruedaDeAuxilio = ruedaDeAuxilio;
+    }
+
 
 
     @Override

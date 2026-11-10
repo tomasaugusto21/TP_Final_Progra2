@@ -69,6 +69,12 @@ public abstract class Vehiculo implements Identificable {
         return estadoVehiculo;
     }
 
+    public void setPrecioPorHora(double precioPorHora) {
+        this.precioPorHora = precioPorHora;
+    }
+
+
+
     protected void setId(int id) {
         this.id = id;
     }
@@ -102,10 +108,11 @@ public abstract class Vehiculo implements Identificable {
     //metodo para calcular el alquiler
     public abstract double calcularCostoAlquiler(Entrega entrega);
 
-    //Método para actualizar el kilometraje
+    //Metodo para actualizar el kilometraje
     public void actualizarKilometraje(double kmRecorridos) {
         if (kmRecorridos > 0) {
             this.kilometraje += kmRecorridos;
         }
     }
+
 }
