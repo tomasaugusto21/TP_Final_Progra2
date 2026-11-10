@@ -26,6 +26,16 @@ public abstract class Vehiculo implements Identificable {
         this.estadoVehiculo = estadoVehiculo;
     }
 
+    public Vehiculo(String patente, String marca, String modelo, int anio, double kilometraje, double precioPorHora, EstadoVehiculo estadoVehiculo) {
+        this.patente = patente;
+        this.marca = marca;
+        this.modelo = modelo;
+        this.anio = anio;
+        this.kilometraje = kilometraje;
+        this.precioPorHora = precioPorHora;
+        this.estadoVehiculo = estadoVehiculo;
+    }
+
     @Override
     public int getID() {
         return id;
@@ -57,6 +67,10 @@ public abstract class Vehiculo implements Identificable {
 
     public EstadoVehiculo getEstadoVehiculo() {
         return estadoVehiculo;
+    }
+
+    protected void setId(int id) {
+        this.id = id;
     }
 
     @Override

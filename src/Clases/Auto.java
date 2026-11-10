@@ -13,6 +13,12 @@ public class Auto extends Vehiculo{
         this.ruedaDeAuxilio = ruedaDeAuxilio;
     }
 
+    public Auto(String patente, String marca, String modelo, int anio, double kilometraje, double precioPorHora, EstadoVehiculo estadoVehiculo, int cantidadDePuertas, boolean ruedaDeAuxilio) {
+        super(patente, marca, modelo, anio, kilometraje, precioPorHora, estadoVehiculo);
+        this.cantidadDePuertas = cantidadDePuertas;
+        this.ruedaDeAuxilio = ruedaDeAuxilio;
+    }
+
     public int getCantidadDePuertas() {
         return cantidadDePuertas;
     }
