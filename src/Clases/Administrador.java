@@ -9,8 +9,10 @@ public class Administrador extends Usuario{
         super(id, nombre, apellido, dni, email, username,rol);
     }
 
-    public Empleado crearEmpleado(int id, String nombre, String apellido, int dni, String email, String username, Enums.RolDeUsuario rol, int legajo) {
-        return new Empleado(id, nombre, apellido, dni, email, username, rol, legajo);
+    public Administrador(String nombre, String apellido, int dni, String email, String username, RolDeUsuario rol) {
+        super(nombre, apellido, dni, email, username, rol);
     }
+
+
 
 }

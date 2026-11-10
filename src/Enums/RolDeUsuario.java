@@ -1,7 +1,7 @@
 package Enums;
 
 public enum RolDeUsuario {
-    ADMIN,
+    ADMINISTRADOR,
     EMPLEADO,
     CLIENTE
 }

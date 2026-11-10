@@ -11,9 +11,9 @@ import java.time.LocalDateTime;
 public class DBHandler {
     private static final String url = "jdbc:sqlite:alquiler.db?foreign_keys=on";
 
-    public static boolean agregar_vehiculo(Vehiculo vehiculo) {
+    public static int agregar_vehiculo(Vehiculo vehiculo) {
 
-        boolean agregado = false;
+        int idGenerada = -1;
 
         String INSERT_QUERY = "INSERT INTO vehiculo(patente,marca,modelo,anio,kilometraje,precio_por_hora,estado)VALUES(?,?,?,?,?,?,?)";
         String INSERT_QUERY_AUTO = "INSERT INTO auto(id,cantidad_puertas,tiene_rueda_auxilio)VALUES(?,?,?)";
@@ -34,7 +34,7 @@ public class DBHandler {
 
             try (ResultSet result = statement.getGeneratedKeys()) {
                 if (result.next()) {
-                    int id = result.getInt("id");
+                    int id = result.getInt(1);
 
                     if (vehiculo instanceof Auto) {
                         Auto auto = (Auto) vehiculo;
@@ -47,7 +47,7 @@ public class DBHandler {
                             int filasAfectadas = statementAuto.executeUpdate();
 
                             if (filasAfectadas == 1) {
-                                agregado = true;
+                                idGenerada = id;
                             }
                         }
                     }
@@ -63,7 +63,7 @@ public class DBHandler {
                             int filasAfectadas = statementVehiculoCarga.executeUpdate();
 
                             if (filasAfectadas == 1) {
-                                agregado = true;
+                                idGenerada = id;
                             }
                         }
                     }
@@ -79,7 +79,7 @@ public class DBHandler {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return agregado;
+        return idGenerada;
     }
 
     /// la idea no es que se eliminen los vehiculos porque se perderian datos en los registros, sino que los damos de baja
@@ -193,12 +193,12 @@ public class DBHandler {
         return filas_alteradas;
     }
 
-    public static boolean agregar_usuario(Usuario usuario, String password) {
+    public static int agregar_usuario(Usuario usuario, String password) {
 
-        boolean agregado = false;
+        int idGenerada = -1;
 
         String INSERT_QUERY = "INSERT INTO usuario(nombre,apellido,dni,email,username,password,rol)VALUES(?,?,?,?,?,?,?)";
-        String INSERT_QUERY_EMPLEADO = "INSERT INTO empleado(id,legajo,)VALUES(?,?)";
+        String INSERT_QUERY_EMPLEADO = "INSERT INTO empleado(id,legajo)VALUES(?,?)";
         String INSERT_QUERY_CLIENTE = "INSERT INTO cliente(id,nro_licencia,telefono,domicilio)VALUES(?,?,?,?)";
 
         try (Connection connection = DriverManager.getConnection(url);
@@ -206,7 +206,7 @@ public class DBHandler {
 
             statement.setString(1, usuario.getNombre());
             statement.setString(2, usuario.getApellido());
-            statement.setInt(3, usuario.getDni());
+            statement.setString(3, String.valueOf(usuario.getDni()));
             statement.setString(4, usuario.getEmail());
             statement.setString(5, usuario.getUsername());
             statement.setString(6, password);
@@ -216,7 +216,7 @@ public class DBHandler {
 
             try (ResultSet result = statement.getGeneratedKeys()) {
                 if (result.next()) {
-                    int id = result.getInt("id");
+                    int id = result.getInt(1);
 
                     if (usuario instanceof Empleado) {
                         Empleado empleado = (Empleado) usuario;
@@ -227,7 +227,7 @@ public class DBHandler {
                             statement_empleado.setString(2, empleado.getLegajo());
                             int filas_agregadas = statement_empleado.executeUpdate();
                             if (filas_agregadas >= 1) {
-                                agregado = true;
+                                idGenerada = id;
                             }
                         }
                     }
@@ -244,7 +244,7 @@ public class DBHandler {
 
                             int filas_agregadas = statement_cliente.executeUpdate();
                             if (filas_agregadas >= 1) {
-                                agregado = true;
+                                idGenerada = id;
                             }
                         }
                     }
@@ -255,9 +255,60 @@ public class DBHandler {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return agregado;
+        return idGenerada;
     }
 
+    public static Usuario obtenerUsuario(String usernameBuscado, String contraseñaBuscada) {
+
+        Usuario buscado = null;
+
+        String SELECT_QUERY = "SELECT u.id, u.nombre, u.apellido, u.dni, u.email, u.username, u.rol, "
+                + "e.legajo, c.nro_licencia, c.telefono, c.domicilio "
+                + "FROM usuario u "
+                + "LEFT JOIN empleado e ON e.id = u.id "
+                + "LEFT JOIN cliente c ON c.id = u.id "
+                + "WHERE u.username = ? AND u.password = ?";
+
+        try (Connection connection = DriverManager.getConnection(url);
+             PreparedStatement statement = connection.prepareStatement(SELECT_QUERY)) {
+
+            statement.setString(1, usernameBuscado);
+            statement.setString(2, contraseñaBuscada);
+
+            try (ResultSet rs = statement.executeQuery()) {
+
+                if (!rs.next()) {
+                    return buscado;
+                }
+
+                int id = rs.getInt("id");
+                String nombre = rs.getString("nombre");
+                String apellido = rs.getString("apellido");
+                int dni = Integer.parseInt(rs.getString("dni"));
+                String email = rs.getString("email");
+                String username = rs.getString("username");
+                RolDeUsuario rol = RolDeUsuario.valueOf(rs.getString("rol"));
+
+
+                if (rol == RolDeUsuario.ADMINISTRADOR) {
+                    buscado = new Administrador(nombre, apellido, dni, email, username, rol);
+                } else if (rol == RolDeUsuario.EMPLEADO) {
+                    buscado = new Empleado(nombre, apellido, dni, email, username, rol,
+                            rs.getString("legajo"));
+                } else if (rol == RolDeUsuario.CLIENTE) {
+                    buscado = new Cliente(nombre, apellido, dni, email, username, rol,
+                            rs.getString("nro_licencia"), rs.getString("telefono"),
+                            rs.getString("domicilio"));
+                }
+
+                buscado.setId(id);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return buscado;
+    }
 
     public static int actualizar_usuario_nombre(int id_actualizar, String nuevo_nombre) {
         int filas_alteradas = 0;
@@ -367,7 +418,7 @@ public class DBHandler {
         return filas_alteradas;
     }
 
-    public static int actualizar_cliente_telegono(int id_actualizar, String nuevo_telefono) {
+    public static int actualizar_cliente_telefono(int id_actualizar, String nuevo_telefono) {
         int filas_alteradas = 0;
         String UPDATE_QUERY = "UPDATE usuario SET telefono = ? WHERE id = ?";
 

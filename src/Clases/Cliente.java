@@ -15,6 +15,13 @@ public class Cliente extends Usuario{
         this.domicilio = domicilio;
     }
 
+    public Cliente(String nombre, String apellido, int dni, String email, String username, RolDeUsuario rol, String numeroDeLicencia, String telefono, String domicilio) {
+        super(nombre, apellido, dni, email, username, rol);
+        this.numeroDeLicencia = numeroDeLicencia;
+        this.telefono = telefono;
+        this.domicilio = domicilio;
+    }
+
     public String getNumeroDeLicencia() {
         return numeroDeLicencia;
     }
@@ -25,5 +32,13 @@ public class Cliente extends Usuario{
 
     public String getDomicilio() {
         return domicilio;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
+    public void setDomicilio(String domicilio) {
+        this.domicilio = domicilio;
     }
 }

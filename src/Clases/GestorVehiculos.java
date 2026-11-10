@@ -47,11 +47,16 @@ public class GestorVehiculos {
             throw new ObjetoDuplicadoEx("El Auto a agregar ya existe en el almacen de vehiculos");
         }
 
-        if (DBHandler.agregar_vehiculo(auto)){
-            vehiculos.agregar(auto);
-            return true;
+        int id = DBHandler.agregar_vehiculo(auto);
+
+        if (id == -1){
+            return false;
         }
-        return false;
+
+        auto.setId(id);
+        vehiculos.agregar(auto);
+
+        return true;
     }
 
     public boolean agregarVehiculoDeCarga (String patente, String marca, String modelo, int anio, double kilometraje, double precioPorHora, EstadoVehiculo estadoVehiculo, double capacidadDeCargaKg, double precioPorKg) throws ValidacionEx, ObjetoDuplicadoEx, ObjetoInvalidoEx {
@@ -90,11 +95,16 @@ public class GestorVehiculos {
             throw new ObjetoDuplicadoEx("El vehiculo de carga a agregar ya existe en el almacen de vehiculos");
         }
 
-        if (DBHandler.agregar_vehiculo(vehiculoDeCarga)){
-            vehiculos.agregar(vehiculoDeCarga);
-            return true;
+        int id = DBHandler.agregar_vehiculo(vehiculoDeCarga);
+
+        if (id == -1){
+            return false;
         }
-        return false;
+
+        vehiculoDeCarga.setId(id);
+        vehiculos.agregar(vehiculoDeCarga);
+
+        return true;
     }
 
 
