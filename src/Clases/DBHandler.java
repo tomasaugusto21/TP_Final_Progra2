@@ -143,8 +143,63 @@ public class DBHandler {
     }
 
 
+    public static List<Devolucion> obtenerTodasLasDevoluciones() {
+        List<Devolucion> devoluciones = new ArrayList<>();
+        String SELECT_QUERY = "SELECT id, id_entrega, id_empleado, fecha_hora_devolucion, km_recorridos, costo_total FROM devolucion";
+
+        try (Connection connection = DriverManager.getConnection(url);
+             PreparedStatement statement = connection.prepareStatement(SELECT_QUERY);
+             ResultSet rs = statement.executeQuery()) {
+
+            while (rs.next()) {
+                Devolucion devolucion = new Devolucion(
+                        rs.getInt("id_entrega"),
+                        rs.getInt("id_empleado"),
+                        LocalDateTime.parse(rs.getString("fecha_hora_devolucion")),
+                        rs.getDouble("km_recorridos"),
+                        rs.getDouble("costo_total"));
+                devolucion.setId(rs.getInt("id"));
+                devoluciones.add(devolucion);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return devoluciones;
+    }
 
 
+    public static List<Entrega> obtenerTodasLasEntregas() {
+        List<Entrega> entregas = new ArrayList<>();
+        String SELECT_QUERY = "SELECT id, id_cliente, id_vehiculo, id_empleado, id_reserva, "
+                + "fecha_hora_entrega, fecha_devolucion_prevista, km_entrega, kg_transportados, activa "
+                + "FROM entrega";
+
+        try (Connection connection = DriverManager.getConnection(url);
+             PreparedStatement statement = connection.prepareStatement(SELECT_QUERY);
+             ResultSet rs = statement.executeQuery()) {
+
+            while (rs.next()) {
+                Entrega entrega = new Entrega(
+                        rs.getInt("id"),
+                        rs.getInt("id_cliente"),
+                        rs.getInt("id_vehiculo"),
+                        rs.getInt("id_empleado"),
+                        rs.getInt("id_reserva"),   // si es NULL devuelve 0, igual que tu convención en crear_entrega
+                        LocalDateTime.parse(rs.getString("fecha_hora_entrega")),
+                        LocalDateTime.parse(rs.getString("fecha_devolucion_prevista")),
+                        rs.getDouble("km_entrega"),
+                        rs.getDouble("kg_transportados"),
+                        rs.getInt("activa") == 1);
+                entregas.add(entrega);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return entregas;
+    }
+    
 
     public static int agregar_vehiculo(Vehiculo vehiculo) {
 

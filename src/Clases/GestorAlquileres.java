@@ -29,6 +29,19 @@ public class GestorAlquileres {
     }
 
 
+
+    public void obtenerDatosBDD (){
+
+        List<Entrega> entregasObtenidas = DBHandler.obtenerTodasLasEntregas();
+        List<Devolucion> devolucionesObtenidas = DBHandler.obtenerTodasLasDevoluciones();
+
+        entregas.addAll(entregasObtenidas);
+
+        devoluciones.addAll(devolucionesObtenidas);
+
+    }
+
+
     public boolean hacerEntrega (int idCliente, int idVehiculo, int idEmpleado, int idReserva, String fechaDevolucionPrevista, double kmEntrega, double kgTransportados) throws ObjetoNoEncontradoEx, ValidacionEx, ObjetoInvalidoEx {
 
         gestorReservas.actualizarReservasExpiradas();
