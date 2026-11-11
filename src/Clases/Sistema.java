@@ -1,9 +1,11 @@
 package Clases;
 
+import Enums.EstadoReserva;
 import Enums.EstadoVehiculo;
 import Enums.RolDeUsuario;
 import Excepciones.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -283,10 +285,108 @@ public class Sistema {
         }
         return sb.toString();
     }
+
+
+
+
+
+
+
+
+    //metodos del gestor de reservas
+
+    public boolean crearReserva (int idCliente, int idVehiculo, String horaInicio, String horaFin, String fechaInicio, String fechaFin) throws ObjetoNoEncontradoEx, ObjetoInvalidoEx, ObjetoDuplicadoEx, ValidacionEx {
+        return gestorReservas.crearReserva(idCliente, idVehiculo, horaInicio, horaFin, fechaInicio, fechaFin);
+    }
+
+    public boolean actualizarHoraInicioReserva (int id, String nuevaHora) throws ObjetoInvalidoEx, ValidacionEx {
+        return gestorReservas.actualizarHoraInicioReserva(id, nuevaHora);
+    }
+
+    public boolean actualizarHoraFinReserva (int id, String nuevaHora) throws ObjetoInvalidoEx, ValidacionEx{
+        return gestorReservas.actualizarHoraFinReserva(id, nuevaHora);
+    }
+
+    public boolean actualizarFechaInicioReserva (int id, String nuevaFecha) throws ValidacionEx, ObjetoInvalidoEx{
+        return gestorReservas.actualizarFechaInicioReserva(id, nuevaFecha);
+    }
+
+    public boolean actualizarFechaFinReserva (int id, String nuevaFecha) throws ObjetoInvalidoEx, ValidacionEx{
+        return gestorReservas.actualizarFechaFinReserva(id, nuevaFecha);
+    }
+
+    public boolean actualizarEstadoDeReserva (int id, EstadoReserva nuevoEstado) throws ValidacionEx, ObjetoInvalidoEx, PermisosEx {
+
+        if (this.logueado.getRol() == RolDeUsuario.CLIENTE){
+            throw new PermisosEx("Los clientes no pueden actualizar el estado de una reserva");
+        }
+
+        return gestorReservas.actualizarEstadoDeReserva(id, nuevoEstado);
+    }
+
+    public int actualizarReservasExpiradas () throws PermisosEx {
+
+        if (this.logueado.getRol() == RolDeUsuario.CLIENTE){
+            throw new PermisosEx("Los clientes no pueden actualizar el estado de las reservas");
+        }
+
+        return gestorReservas.actualizarReservasExpiradas();
+    }
+
+    public Reserva buscarReserva (int id) throws ValidacionEx {
+        return gestorReservas.buscarReservaPorId(id);
+    }
+
+    public boolean buscarCrucreDeFechas (String patente, LocalDateTime inicio, LocalDateTime fin) throws PermisosEx, ObjetoNoEncontradoEx, ValidacionEx, ObjetoInvalidoEx {
+
+        if (this.logueado.getRol() == RolDeUsuario.CLIENTE){
+            throw new PermisosEx("Los clientes no tienen permiso para realizar esta accion");
+        }
+
+        Vehiculo v = gestorVehiculos.buscarVehiculoPorPatente(patente);
+
+        Reserva r = gestorReservas.buscarCruceDeFechas(v, inicio, fin);
+
+        if (r == null){
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+    public boolean buscarCrucreDeFechas (String patente, LocalDateTime inicio, LocalDateTime fin, int idReservaAIgnorar) throws PermisosEx, ObjetoNoEncontradoEx, ValidacionEx, ObjetoInvalidoEx {
+
+        if (this.logueado.getRol() == RolDeUsuario.CLIENTE){
+            throw new PermisosEx("Los clientes no tienen permiso para realizar esta accion");
+        }
+
+        Vehiculo v = gestorVehiculos.buscarVehiculoPorPatente(patente);
+
+        Reserva r = gestorReservas.buscarCruceDeFechas(v, inicio, fin, idReservaAIgnorar);
+
+        if (r == null){
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+    public String listarReservaDeCliente (int id) throws ObjetoNoEncontradoEx, PermisosEx, ValidacionEx, ObjetoInvalidoEx {
+
+        Cliente c = gestorUsuarios.buscarCliente(id);
+
+        StringBuilder sb = new StringBuilder();
+
+        List<Reserva> reservas = gestorReservas.listarDeCliente(c);
+
+        for (Reserva r : reservas){
+            sb.append(r.toString()).append("\n");
+        }
+
+        return sb.toString();
+    }
+
+
     
-
-
-
-
 
 }
