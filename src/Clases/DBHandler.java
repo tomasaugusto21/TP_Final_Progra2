@@ -417,7 +417,7 @@ public class DBHandler {
 
     public static int actualizar_cliente_telefono(int id_actualizar, String nuevo_telefono) {
         int filas_alteradas = 0;
-        String UPDATE_QUERY = "UPDATE usuario SET telefono = ? WHERE id = ?";
+        String UPDATE_QUERY = "UPDATE cliente SET telefono = ? WHERE id = ?";
 
         try (Connection connection = DriverManager.getConnection(url);
              PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY)) {
@@ -435,7 +435,7 @@ public class DBHandler {
 
     public static int actualizar_cliente_domicilio(int id_actualizar, String nuevo_domicilio) {
         int filas_alteradas = 0;
-        String UPDATE_QUERY = "UPDATE usuario SET  = ? WHERE id = ?";
+        String UPDATE_QUERY = "UPDATE cliente SET domicilio = ? WHERE id = ?";
 
         try (Connection connection = DriverManager.getConnection(url);
              PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY)) {
@@ -818,15 +818,15 @@ public class DBHandler {
             }
 
             try (PreparedStatement statementDos = connection.prepareStatement(UPDATE_ENTREGA)) {
-                statement.setInt(1, devolucion.getIdEntrega());
-                statement.executeUpdate();
+                statementDos.setInt(1, devolucion.getIdEntrega());
+                statementDos.executeUpdate();
             }
 
             try (PreparedStatement statementTres = connection.prepareStatement(UPDATE_VEHICULO)) {
-                statement.setDouble(1, kmFinal);
-                statement.setString(2, EstadoVehiculo.DISPONIBLE.name());
-                statement.setInt(3, idVehiculo);
-                statement.executeUpdate();
+                statementTres.setDouble(1, kmFinal);
+                statementTres.setString(2, EstadoVehiculo.DISPONIBLE.name());
+                statementTres.setInt(3, idVehiculo);
+                statementTres.executeUpdate();
             }
 
         } catch (SQLException e) {

@@ -175,7 +175,7 @@ public class GestorReservas {
         }
 
         reserva.setFechaInicio(nuevoInicio.toLocalDate().atStartOfDay());
-        reserva.setFechaInicio(nuevoInicio);
+        reserva.setHoraInicio(nuevoInicio);
 
         return true;
     }

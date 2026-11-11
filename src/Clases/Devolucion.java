@@ -13,12 +13,12 @@ public class Devolucion {
     private double costoTotal;
 
     // Constructor
-    public Devolucion(int id, int idEntrega, int idEmpleado, LocalDateTime fechaHoraDevolucion, double kmFinales, double kmInicial, double costoTotal) {
+    public Devolucion(int id, int idEntrega, int idEmpleado, LocalDateTime fechaHoraDevolucion, double kmRecorridos, double costoTotal) {
         this.id = id;
         this.idEntrega = idEntrega;
         this.idEmpleado = idEmpleado;
         this.fechaHoraDevolucion = fechaHoraDevolucion;
-        this.kmRecorridos = calcularKmRecorridos(kmFinales, kmInicial);
+        this.kmRecorridos = kmRecorridos;
         this.costoTotal = costoTotal;
     }
 
