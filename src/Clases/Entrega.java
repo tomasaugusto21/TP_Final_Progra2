@@ -1,4 +1,5 @@
 package Clases;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -15,18 +16,29 @@ public class Entrega {
     private double kgTransportados;
     private boolean activa;
 
-    public Entrega(int id,int idCliente,int idVehiculo,int idEmpleado,int idReserva,LocalDateTime fechaHoraEntrega,LocalDateTime fechaDevolucionPrevista,double kmEntrega,double kgTransportados,boolean activa){
-
+    public Entrega(int id, int idCliente, int idVehiculo, int idEmpleado, int idReserva, LocalDateTime fechaHoraEntrega, LocalDateTime fechaDevolucionPrevista, double kmEntrega, double kgTransportados, boolean activa) {
         this.id = id;
         this.idCliente = idCliente;
         this.idVehiculo = idVehiculo;
         this.idEmpleado = idEmpleado;
         this.idReserva = idReserva;
-        this.fechaHoraEntrega = LocalDateTime.now(); // Se toma la hora actual del sistema
+        this.fechaHoraEntrega = fechaHoraEntrega;
         this.fechaDevolucionPrevista = fechaDevolucionPrevista;
         this.kmEntrega = kmEntrega;
         this.kgTransportados = kgTransportados;
-        this.activa = true; // Arranca activa porque se acaba de entregar
+        this.activa = activa;
+    }
+
+    public Entrega(int idCliente, int idVehiculo, int idEmpleado, int idReserva, LocalDateTime fechaDevolucionPrevista, double kmEntrega, double kgTransportados) {
+        this.idCliente = idCliente;
+        this.idVehiculo = idVehiculo;
+        this.idEmpleado = idEmpleado;
+        this.idReserva = idReserva;
+        this.fechaHoraEntrega = LocalDateTime.now();
+        this.fechaDevolucionPrevista = fechaDevolucionPrevista;
+        this.kmEntrega = kmEntrega;
+        this.kgTransportados = kgTransportados;
+        this.activa = true;
     }
 
     public int getId() {
@@ -80,6 +92,10 @@ public class Entrega {
         this.kmEntrega = kmEntrega;
     }
 
+    public void setIdEmpleado(int idEmpleado) {
+        this.idEmpleado = idEmpleado;
+    }
+
     //Métodopara mostrar que el auto ya fue devuelto
     public void finalizarEntrega() {
         this.activa = false;
@@ -116,14 +132,8 @@ public class Entrega {
 
     //metodo para calcular las horas del alquiler
     public double calcularHoras() {
-        int horaEntrega = fechaHoraEntrega.getHour();
-        int horaDevolucion = fechaDevolucionPrevista.getHour();
-
-        double horas = horaDevolucion - horaEntrega;
-
-        if (horas <= 0) {
-            horas = 1.0; // Mínimo 1 hora de cobro
-        }
-        return horas;
+        double minutos = Duration.between(fechaHoraEntrega, fechaDevolucionPrevista).toMinutes();
+        double horas = Math.ceil(minutos / 60.0);
+        return Math.max(horas, 1.0);
     }
 }

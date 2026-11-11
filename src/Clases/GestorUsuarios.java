@@ -215,6 +215,14 @@ public class GestorUsuarios {
         return (Cliente) usuario;
     }
 
+    public Empleado buscarEmpleado (int id) throws ValidacionEx, ObjetoNoEncontradoEx {
+        Usuario usuario = usuarios.buscarPorId(id);
+        if (!(usuario instanceof Empleado)) {
+            throw new ObjetoNoEncontradoEx("No existe un empleado con id " + id);
+        }
+        return (Empleado) usuario;
+    }
+
     public List<Cliente> listarClientes (){
         return usuarios.listarDeTipo(Cliente.class);
     }

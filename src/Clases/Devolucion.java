@@ -13,12 +13,20 @@ public class Devolucion {
     private double costoTotal;
 
     // Constructor
-    public Devolucion(int id, int idEntrega, int idEmpleado, double kmFinales, double kmInicial, double costoTotal) {
+    public Devolucion(int id, int idEntrega, int idEmpleado, LocalDateTime fechaHoraDevolucion, double kmFinales, double kmInicial, double costoTotal) {
         this.id = id;
         this.idEntrega = idEntrega;
         this.idEmpleado = idEmpleado;
-        this.fechaHoraDevolucion = LocalDateTime.now(); // Hora exacta de devolución
+        this.fechaHoraDevolucion = fechaHoraDevolucion;
         this.kmRecorridos = calcularKmRecorridos(kmFinales, kmInicial);
+        this.costoTotal = costoTotal;
+    }
+
+    public Devolucion(int idEntrega, int idEmpleado, LocalDateTime fechaHoraDevolucion, double kmRecorridos, double costoTotal) {
+        this.idEntrega = idEntrega;
+        this.idEmpleado = idEmpleado;
+        this.fechaHoraDevolucion = fechaHoraDevolucion;
+        this.kmRecorridos = kmRecorridos;
         this.costoTotal = costoTotal;
     }
 
@@ -96,15 +104,6 @@ public class Devolucion {
         return Objects.hash(id);
     }
 
-    // Método para calcular los km que recorrió el cliente
-    public double calcularKmRecorridos(double kmFinales, double kmInicial) {
-        double recorridos = kmFinales - kmInicial;
 
-        if (recorridos < 0) {
-            recorridos = 0;
-        }
-
-        return recorridos;
-    }
 
 }

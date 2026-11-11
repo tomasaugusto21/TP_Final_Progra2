@@ -610,6 +610,9 @@ public class DBHandler {
     public static int crear_entrega (Entrega entrega) {
         int id = -1;
         String INSERT_QUERY = "INSERT INTO entrega(id_cliente,id_vehiculo,id_empleado,id_reserva,fecha_hora_entrega,fecha_devolucion_prevista,km_entrega,kg_transportados,activa)VALUES (?,?,?,?,?,?,?,?,?)";
+        String UPDATE_VEHICULO = "UPDATE vehiculo SET estado = ? WHERE id = ?";
+        String UPDATE_RESERVA = "UPDATE reserva SET estado = ? WHERE id = ?";
+
 
         try (Connection connection = DriverManager.getConnection(url);
              PreparedStatement statement = connection.prepareStatement(INSERT_QUERY, Statement.RETURN_GENERATED_KEYS)) {
@@ -617,7 +620,11 @@ public class DBHandler {
             statement.setInt(1, entrega.getIdCliente());
             statement.setInt(2, entrega.getIdVehiculo());
             statement.setInt(3, entrega.getIdEmpleado());
-            statement.setInt(4, entrega.getIdReserva());
+            if (entrega.getIdReserva() == 0) {
+                statement.setNull(4, Types.INTEGER);
+            } else {
+                statement.setInt(4, entrega.getIdReserva());
+            }
             statement.setString(5, entrega.getFechaHoraEntrega().toString());
             statement.setString(6, entrega.getFechaDevolucionPrevista().toString());
             statement.setDouble(7, entrega.getKmEntrega());
@@ -628,7 +635,21 @@ public class DBHandler {
 
             try (ResultSet result = statement.getGeneratedKeys()) {
                 if (result.next()) {
-                    id = result.getInt("id");
+                    id = result.getInt(1);
+                }
+            }
+
+            try (PreparedStatement statementDos = connection.prepareStatement(UPDATE_VEHICULO)) {
+                statementDos.setString(1, EstadoVehiculo.ALQUILADO.name());
+                statementDos.setInt(2, entrega.getIdVehiculo());
+                statementDos.executeUpdate();
+            }
+
+            if (entrega.getIdReserva() != 0) {
+                try (PreparedStatement statementTres = connection.prepareStatement(UPDATE_RESERVA)) {
+                    statementTres.setString(1, EstadoReserva.FINALIZADA.name());
+                    statementTres.setInt(2, entrega.getIdReserva());
+                    statementTres.executeUpdate();
                 }
             }
 
@@ -709,7 +730,7 @@ public class DBHandler {
     }
     public static int actualizar_entrega_fecha_devolucion(int id_actualizar,LocalDateTime nueva_fecha_entrega) {
         int filas_alteradas = 0;
-        String UPDATE_QUERY = "UPDATE entrega SET  = ? WHERE id = ?";
+        String UPDATE_QUERY = "UPDATE entrega SET fecha_devolucion_prevista = ? WHERE id = ?";
 
         try (Connection connection = DriverManager.getConnection(url);
              PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY)) {
@@ -776,9 +797,11 @@ public class DBHandler {
         return filas_alteradas;
     }
 
-    public static int cargar_devolucion (Devolucion devolucion) {
+    public static int cargar_devolucion (Devolucion devolucion, int idVehiculo, double kmFinal) {
         int id = -1;
         String INSERT_QUERY = "INSERT INTO devolucion(id_entrega,id_empleado,fecha_hora_devolucion,km_recorridos,costo_total)VALUES (?,?,?,?,?)";
+        String UPDATE_ENTREGA = "UPDATE entrega SET activa = 0 WHERE id = ?";
+        String UPDATE_VEHICULO = "UPDATE vehiculo SET kilometraje = ?, estado = ? WHERE id = ?";
 
         try (Connection connection = DriverManager.getConnection(url);
              PreparedStatement statement = connection.prepareStatement(INSERT_QUERY, Statement.RETURN_GENERATED_KEYS)) {
@@ -793,8 +816,20 @@ public class DBHandler {
 
             try (ResultSet result = statement.getGeneratedKeys()) {
                 if (result.next()) {
-                    id = result.getInt("id");
+                    id = result.getInt(1);
                 }
+            }
+
+            try (PreparedStatement statementDos = connection.prepareStatement(UPDATE_ENTREGA)) {
+                statement.setInt(1, devolucion.getIdEntrega());
+                statement.executeUpdate();
+            }
+
+            try (PreparedStatement statementTres = connection.prepareStatement(UPDATE_VEHICULO)) {
+                statement.setDouble(1, kmFinal);
+                statement.setString(2, EstadoVehiculo.DISPONIBLE.name());
+                statement.setInt(3, idVehiculo);
+                statement.executeUpdate();
             }
 
         } catch (SQLException e) {

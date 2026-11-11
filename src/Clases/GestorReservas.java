@@ -248,6 +248,24 @@ public class GestorReservas {
         return true;
     }
 
+    public int actualizarReservasExpiradas() {
+
+        int cantidad = 0;
+
+        for (Reserva r : reservas.listarTodos()) {
+
+            if (r.getEstado() == EstadoReserva.VIGENTE && r.getHoraFin().isBefore(LocalDateTime.now())) {
+
+                if (DBHandler.actualizar_reserva_estado(r.getID(), EstadoReserva.EXPIRADA) > 0) {
+                    r.vencerReserva();
+                    cantidad++;
+                }
+            }
+        }
+        return cantidad;
+    }
+
+
     public Reserva buscarReservaPorId (int id) throws ValidacionEx {
         return reservas.buscarPorId(id);
     }

@@ -77,6 +77,10 @@ public abstract class Vehiculo implements Identificable {
         this.estadoVehiculo = estadoVehiculo;
     }
 
+    public void setKilometraje(double kilometraje) {
+        this.kilometraje = kilometraje;
+    }
+
     protected void setId(int id) {
         this.id = id;
     }
