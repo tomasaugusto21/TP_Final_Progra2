@@ -87,7 +87,14 @@ public class GestorAlquileres {
             if (reserva.getIdVehiculo() != idVehiculo) {
                 throw new ObjetoInvalidoEx("La reserva no corresponde a ese vehículo");
             }
+            if (LocalDateTime.now().isBefore(reserva.getHoraInicio())) {
+                throw new ValidacionEx("La reserva todavía no comenzo y por lo tanto el vehiculo no se puede entregar ");
+            }
+            if (fechaDevolucion.isAfter(reserva.getHoraFin())) {
+                throw new ValidacionEx("La fecha de devolución prevista no puede superar el fin de la reserva");
+            }
         }
+
 
         if (gestorReservas.buscarCruceDeFechas(v, LocalDateTime.now(), fechaDevolucion, idReserva) != null) {
             throw new ValidacionEx("El período del alquiler se pisa con otra reserva del vehículo");
