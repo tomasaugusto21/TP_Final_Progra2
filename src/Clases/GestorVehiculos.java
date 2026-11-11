@@ -190,6 +190,10 @@ public class GestorVehiculos {
         throw new ObjetoNoEncontradoEx("No se pudo encontrar un vehículo con la patente buscada");
     }
 
+    public Vehiculo buscarPorId (int id) throws ValidacionEx {
+        return vehiculos.buscarPorId(id);
+    }
+
     public EstadoVehiculo consultarEstado(String patente) throws ObjetoNoEncontradoEx, ValidacionEx {
         return buscarVehiculoPorPatente(patente).getEstadoVehiculo();
     }

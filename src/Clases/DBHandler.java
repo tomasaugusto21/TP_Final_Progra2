@@ -474,7 +474,7 @@ public class DBHandler {
 
             try (ResultSet result = statement.getGeneratedKeys()) {
                 if (result.next()) {
-                    id = result.getInt("id");
+                    id = result.getInt(1);
                 }
             }
 
@@ -509,7 +509,7 @@ public class DBHandler {
         try (Connection connection = DriverManager.getConnection(url);
              PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY)) {
 
-            statement.setString(1,nueva_hora_inicio.toString());
+            statement.setString(1,nueva_hora_inicio.toLocalTime().toString());
             statement.setInt(2, id_actualizar);
 
             filas_alteradas = statement.executeUpdate();

@@ -74,6 +74,26 @@ public class Reserva implements Identificable {
         return fechaCreacion;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setHoraInicio(LocalDateTime horaInicio) {
+        this.horaInicio = horaInicio;
+    }
+
+    public void setHoraFin(LocalDateTime horaFin) {
+        this.horaFin = horaFin;
+    }
+
+    public void setFechaInicio(LocalDateTime fechaInicio) {
+        this.fechaInicio = fechaInicio;
+    }
+
+    public void setFechaFin(LocalDateTime fechaFin) {
+        this.fechaFin = fechaFin;
+    }
+
 
     @Override
     public String toString() {
@@ -112,5 +132,16 @@ public class Reserva implements Identificable {
     public void finalizarReserva(){
         this.estado = EstadoReserva.FINALIZADA;
     }
+
+    public void vencerReserva (){
+        this.estado = EstadoReserva.EXPIRADA;
+    }
+
+    //metodo para controlar que dos reservas no se solapen, devuelve true si se solapan
+    public boolean seSolapaCon(LocalDateTime otroInicio, LocalDateTime otroFin) {
+        return horaInicio.isBefore(otroFin) && otroInicio.isBefore(horaFin);
+    }
+
+
 
 }
