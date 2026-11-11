@@ -35,6 +35,16 @@ public class GestorReservas {
 
 
 
+    public void descargarDatosBDD () throws ObjetoInvalidoEx, ObjetoDuplicadoEx, ValidacionEx {
+
+        List<Reserva> obtenidas = DBHandler.obtenerTodasLasReservas();
+
+        for (Reserva r : obtenidas){
+            reservas.agregar(r);
+        }
+    }
+
+
     public boolean crearReserva (int idCliente, int idVehiculo, String horaInicio, String horaFin, String fechaInicio, String fechaFin) throws ValidacionEx, ObjetoInvalidoEx, ObjetoDuplicadoEx, ObjetoNoEncontradoEx {
 
         actualizarReservasExpiradas();

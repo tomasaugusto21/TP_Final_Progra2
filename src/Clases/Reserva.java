@@ -37,6 +37,19 @@ public class Reserva implements Identificable {
         this.estado = EstadoReserva.VIGENTE; // Toda reserva nace activa
         this.fechaCreacion = LocalDateTime.now(); // Guarda cuándo se creó en el sistema
     }
+
+    public Reserva(int id, int idCliente, int idVehiculo, LocalDateTime horaInicio, LocalDateTime horaFin, LocalDateTime fechaInicio, LocalDateTime fechaFin, EstadoReserva estado, LocalDateTime fechaCreacion) {
+        this.id = id;
+        this.idCliente = idCliente;
+        this.idVehiculo = idVehiculo;
+        this.horaInicio = horaInicio;
+        this.horaFin = horaFin;
+        this.fechaInicio = fechaInicio;
+        this.fechaFin = fechaFin;
+        this.estado = estado;
+        this.fechaCreacion = fechaCreacion;
+    }
+
     @Override
     public int getID() {
         return id;

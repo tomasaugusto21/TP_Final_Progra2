@@ -6,7 +6,9 @@ import Enums.RolDeUsuario;
 import Excepciones.ErrorDeCargaEx;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -111,6 +113,34 @@ public class DBHandler {
         return usuarios;
     }
 
+
+    public static List<Reserva> obtenerTodasLasReservas() {
+        List<Reserva> reservas = new ArrayList<>();
+        String SELECT_QUERY = "SELECT id, id_cliente, id_vehiculo, hora_inicio, hora_fin, fecha_inicio, fecha_fin, estado, fecha_creacion FROM reserva";
+
+        try (Connection connection = DriverManager.getConnection(url);
+             PreparedStatement statement = connection.prepareStatement(SELECT_QUERY);
+             ResultSet rs = statement.executeQuery()) {
+
+            while (rs.next()) {
+                Reserva reserva = new Reserva(
+                        rs.getInt("id"),
+                        rs.getInt("id_cliente"),
+                        rs.getInt("id_vehiculo"),
+                        LocalDateTime.parse(rs.getString("hora_inicio")),
+                        LocalDateTime.parse(rs.getString("hora_fin")),
+                        LocalDateTime.parse(rs.getString("fecha_inicio")),
+                        LocalDateTime.parse(rs.getString("fecha_fin")),
+                        EstadoReserva.valueOf(rs.getString("estado")),
+                        LocalDateTime.parse(rs.getString("fecha_creacion")));
+                reservas.add(reserva);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return reservas;
+    }
 
 
 
