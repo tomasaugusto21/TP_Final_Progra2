@@ -11,6 +11,15 @@ public class GestorUsuarios {
 
 
 
+    public void descargarDatosBDD () throws ObjetoInvalidoEx, ObjetoDuplicadoEx, ValidacionEx {
+
+        List<Usuario> obtenidos = DBHandler.obtenerTodosLosUsuarios();
+
+        for (Usuario u : obtenidos){
+            usuarios.agregar(u);
+        }
+    }
+
     public Cliente signup (String nombre, String apellido, int dni, String email, String username, String numeroDeLicencia, String telefono, String domicilio, String contraseña) throws ValidacionEx, ObjetoDuplicadoEx, ObjetoInvalidoEx, ErrorDeCargaEx {
 
         validarPassword(contraseña);

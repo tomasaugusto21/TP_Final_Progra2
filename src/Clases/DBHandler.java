@@ -64,7 +64,52 @@ public class DBHandler {
         return vehiculos;
     }
 
+    public static List<Usuario> obtenerTodosLosUsuarios() {
+        List<Usuario> usuarios = new ArrayList<>();
 
+        String SELECT_QUERY = "SELECT u.id, u.nombre, u.apellido, u.dni, u.email, u.username, u.rol, "
+                + "e.legajo, c.nro_licencia, c.telefono, c.domicilio "
+                + "FROM usuario u "
+                + "LEFT JOIN empleado e ON e.id = u.id "
+                + "LEFT JOIN cliente c ON c.id = u.id";
+
+        try (Connection connection = DriverManager.getConnection(url);
+             PreparedStatement statement = connection.prepareStatement(SELECT_QUERY);
+             ResultSet rs = statement.executeQuery()) {
+
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String nombre = rs.getString("nombre");
+                String apellido = rs.getString("apellido");
+                int dni = Integer.parseInt(rs.getString("dni"));
+                String email = rs.getString("email");
+                String username = rs.getString("username");
+                RolDeUsuario rol = RolDeUsuario.valueOf(rs.getString("rol"));
+
+                Usuario usuario = null;
+
+                if (rol == RolDeUsuario.ADMINISTRADOR) {
+                    usuario = new Administrador(nombre, apellido, dni, email, username, rol);
+                } else if (rol == RolDeUsuario.EMPLEADO) {
+                    usuario = new Empleado(nombre, apellido, dni, email, username, rol,
+                            rs.getString("legajo"));
+                } else if (rol == RolDeUsuario.CLIENTE) {
+                    usuario = new Cliente(nombre, apellido, dni, email, username, rol,
+                            rs.getString("nro_licencia"), rs.getString("telefono"),
+                            rs.getString("domicilio"));
+                }
+
+                if (usuario != null) {
+                    usuario.setId(id);
+                    usuarios.add(usuario);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return usuarios;
+    }
 
 
 
