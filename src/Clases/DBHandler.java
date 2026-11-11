@@ -68,9 +68,6 @@ public class DBHandler {
                         }
                     }
 
-                } else {
-                    //falta agarrarlo por eso tira error.
-                    throw new ErrorDeCargaEx("ERROR: No se logro obtener el identificador del vehiculo");
                 }
 
             }
@@ -123,7 +120,7 @@ public class DBHandler {
     public static int actualizar_precio_x_hora(int id_actualizar, double precio_por_hora_nuevo) {
 
         int filas_alteradas = 0;
-        String UPDATE_QUERY = "UPDATE vehiculos SET precio_por_hora = ? WHERE id = ?";
+        String UPDATE_QUERY = "UPDATE vehiculo SET precio_por_hora = ? WHERE id = ?";
 
         try (Connection connection = DriverManager.getConnection(url);
              PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY)) {

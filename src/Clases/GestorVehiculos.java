@@ -14,7 +14,7 @@ public class GestorVehiculos {
     private final Almacen<Vehiculo> vehiculos = new Almacen<>();
 
 
-    public boolean agregarAuto (String patente, String marca, String modelo, int anio, double kilometraje, double precioPorHora, EstadoVehiculo estadoVehiculo, int cantidadDePuertas, boolean ruedaDeAuxilio) throws ValidacionEx, ObjetoInvalidoEx, ObjetoDuplicadoEx {
+    public boolean agregarAuto (String patente, String marca, String modelo, int anio, double kilometraje, double precioPorHora, int cantidadDePuertas, boolean ruedaDeAuxilio) throws ValidacionEx, ObjetoInvalidoEx, ObjetoDuplicadoEx {
 
         if (patente == null || patente.isBlank()){
             throw new ValidacionEx("La patente no puede ser nula ni estar en blanco");
@@ -28,20 +28,17 @@ public class GestorVehiculos {
         if (anio <=0){
             throw new ValidacionEx("El año del vehiculo debe ser mayor a cero");
         }
-        if (kilometraje <= 0){
-            throw new ValidacionEx("El kilometraje debe ser mayor a cero");
+        if (kilometraje < 0){
+            throw new ValidacionEx("El kilometraje no puede ser negativo");
         }
         if (precioPorHora <= 0){
             throw new ValidacionEx("El precio por hora debe ser mayor a cero");
-        }
-        if (estadoVehiculo == null){
-            throw new ValidacionEx("El estado del vehiculo no puede ser nulo");
         }
         if (cantidadDePuertas <= 0){
             throw new ValidacionEx("El vehiculo debe tener un numero de puertas mayor a cero");
         }
 
-        Auto auto = new Auto(patente, marca, modelo, anio, kilometraje, precioPorHora, estadoVehiculo, cantidadDePuertas, ruedaDeAuxilio);
+        Auto auto = new Auto(patente, marca, modelo, anio, kilometraje, precioPorHora, EstadoVehiculo.DISPONIBLE, cantidadDePuertas, ruedaDeAuxilio);
 
         if (vehiculos.verificarExistencia(auto)){
             throw new ObjetoDuplicadoEx("El Auto a agregar ya existe en el almacen de vehiculos");
@@ -59,7 +56,7 @@ public class GestorVehiculos {
         return true;
     }
 
-    public boolean agregarVehiculoDeCarga (String patente, String marca, String modelo, int anio, double kilometraje, double precioPorHora, EstadoVehiculo estadoVehiculo, double capacidadDeCargaKg, double precioPorKg) throws ValidacionEx, ObjetoDuplicadoEx, ObjetoInvalidoEx {
+    public boolean agregarVehiculoDeCarga (String patente, String marca, String modelo, int anio, double kilometraje, double precioPorHora, double capacidadDeCargaKg, double precioPorKg) throws ValidacionEx, ObjetoDuplicadoEx, ObjetoInvalidoEx {
 
         if (patente == null || patente.isBlank()){
             throw new ValidacionEx("La patente no puede ser nula ni estar en blanco");
@@ -73,14 +70,11 @@ public class GestorVehiculos {
         if (anio <=0){
             throw new ValidacionEx("El año del vehiculo debe ser mayor a cero");
         }
-        if (kilometraje <= 0){
-            throw new ValidacionEx("El kilometraje debe ser mayor a cero");
+        if (kilometraje < 0){
+            throw new ValidacionEx("El kilometraje no puede ser negativo");
         }
         if (precioPorHora <= 0){
             throw new ValidacionEx("El precio por hora debe ser mayor a cero");
-        }
-        if (estadoVehiculo == null){
-            throw new ValidacionEx("El estado del vehiculo no puede ser nulo");
         }
         if (capacidadDeCargaKg <= 0){
             throw new ValidacionEx("La capacidad de carga debe ser mayor a cero");
@@ -89,7 +83,7 @@ public class GestorVehiculos {
             throw new ValidacionEx("El precio por KG debe ser mayor a cero");
         }
 
-        VehiculoDeCarga vehiculoDeCarga = new VehiculoDeCarga(patente, marca, modelo, anio, kilometraje, precioPorHora, estadoVehiculo, capacidadDeCargaKg, precioPorKg);
+        VehiculoDeCarga vehiculoDeCarga = new VehiculoDeCarga(patente, marca, modelo, anio, kilometraje, precioPorHora, EstadoVehiculo.DISPONIBLE, capacidadDeCargaKg, precioPorKg);
 
         if (vehiculos.verificarExistencia(vehiculoDeCarga)){
             throw new ObjetoDuplicadoEx("El vehiculo de carga a agregar ya existe en el almacen de vehiculos");
@@ -110,6 +104,10 @@ public class GestorVehiculos {
 
     public boolean actualizarPrecioPorHora (String patente, double nuevoPrecio) throws ObjetoNoEncontradoEx, ValidacionEx {
 
+        if (nuevoPrecio <= 0){
+            throw new ValidacionEx("El nuevo precio por hora debe ser mayor a cero");
+        }
+
         Vehiculo buscado = buscarVehiculoPorPatente(patente);
 
         int idBuscada = buscado.getID();
@@ -121,9 +119,14 @@ public class GestorVehiculos {
         return false;
     }
 
-    public boolean actualizarRuedaDeAuxilio (String patente, boolean ruedaAuxilio) throws ObjetoNoEncontradoEx, ValidacionEx {
+    public boolean actualizarRuedaDeAuxilio (String patente, boolean ruedaAuxilio) throws ObjetoNoEncontradoEx, ValidacionEx, ObjetoInvalidoEx {
 
         Vehiculo buscado = buscarVehiculoPorPatente(patente);
+
+        if (!(buscado instanceof Auto)) {
+            throw new ObjetoInvalidoEx("El vehículo buscado no es un auto");
+        }
+
         Auto a = (Auto) buscado;
 
         int idBuscada = buscado.getID();
@@ -135,9 +138,18 @@ public class GestorVehiculos {
         return false;
     }
 
-    public boolean actualizarPrecioPorKg (String patente, double nuevoPrecioPorKg) throws ObjetoNoEncontradoEx, ValidacionEx {
+    public boolean actualizarPrecioPorKg (String patente, double nuevoPrecioPorKg) throws ObjetoNoEncontradoEx, ValidacionEx, ObjetoInvalidoEx {
+
+        if (nuevoPrecioPorKg <= 0){
+            throw new ValidacionEx("El nuevo precio por kg debe ser mayor a cero");
+        }
 
         Vehiculo buscado = buscarVehiculoPorPatente(patente);
+
+        if (!(buscado instanceof VehiculoDeCarga)) {
+            throw new ObjetoInvalidoEx("El vehículo buscado no es un vehículo de carga");
+        }
+
         VehiculoDeCarga v = (VehiculoDeCarga) buscado;
 
         int idBuscada = buscado.getID();
@@ -149,27 +161,49 @@ public class GestorVehiculos {
         return false;
     }
 
-    public boolean actualizarCapacidadDeCarga (String patente, double nuevaCapacidad) throws ObjetoNoEncontradoEx, ValidacionEx {
+    public boolean actualizarCapacidadDeCarga (String patente, double nuevaCapacidad) throws ObjetoNoEncontradoEx, ValidacionEx, ObjetoInvalidoEx {
+
+        if (nuevaCapacidad <= 0) {
+            throw new ValidacionEx("La nueva capacidad de carga debe ser mayor a cero");
+        }
 
         Vehiculo buscado = buscarVehiculoPorPatente(patente);
+
+        if (!(buscado instanceof VehiculoDeCarga)) {
+            throw new ObjetoInvalidoEx("El vehículo buscado no es un vehículo de carga");
+        }
+
         VehiculoDeCarga v = (VehiculoDeCarga) buscado;
 
         int idBuscada = buscado.getID();
 
         if (DBHandler.actualizar_capacidad_carga(idBuscada, nuevaCapacidad)==1){
-            v.setPrecioPorKg(nuevaCapacidad);
+            v.setCapacidadDeCargaKg(nuevaCapacidad);
             return true;
         }
         return false;
     }
 
-    public boolean cambiarEstadoVehiculo (String patente, EstadoVehiculo estadoNuevo) throws ObjetoNoEncontradoEx, ValidacionEx {
+    public boolean cambiarEstadoVehiculo(String patente, EstadoVehiculo estadoNuevo)
+            throws ObjetoNoEncontradoEx, ValidacionEx, ObjetoInvalidoEx {
+
+        if (estadoNuevo == null) {
+            throw new ValidacionEx("El nuevo estado no puede ser nulo");
+        }
 
         Vehiculo buscado = buscarVehiculoPorPatente(patente);
 
-        int idBuscada = buscado.getID();
+        if (buscado.getEstadoVehiculo() == EstadoVehiculo.ALQUILADO) {
+            throw new ObjetoInvalidoEx("El vehículo está alquilado y su estado cambia solo con la devolucion");
+        }
+        if (estadoNuevo == EstadoVehiculo.ALQUILADO) {
+            throw new ObjetoInvalidoEx("El estado ALQUILADO solo se asigna al registrar una entrega");
+        }
+        if (buscado.getEstadoVehiculo() == estadoNuevo) {
+            throw new ObjetoInvalidoEx("El vehículo ya está en estado ");
+        }
 
-        if (DBHandler.cambiar_estado(idBuscada,estadoNuevo)==1){
+        if (DBHandler.cambiar_estado(buscado.getID(), estadoNuevo) == 1) {
             buscado.setEstadoVehiculo(estadoNuevo);
             return true;
         }

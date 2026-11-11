@@ -31,6 +31,10 @@ public class VehiculoDeCarga extends Vehiculo{
         this.precioPorKg = precioPorKg;
     }
 
+    public void setCapacidadDeCargaKg(double capacidadDeCargaKg) {
+        this.capacidadDeCargaKg = capacidadDeCargaKg;
+    }
+
     @Override
     public double calcularCostoAlquiler(Entrega entrega) {
         double horas = entrega.calcularHoras();
