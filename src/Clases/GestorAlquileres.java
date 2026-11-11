@@ -30,7 +30,7 @@ public class GestorAlquileres {
 
 
 
-    public void obtenerDatosBDD (){
+    public void descargarDatosBDD (){
 
         List<Entrega> entregasObtenidas = DBHandler.obtenerTodasLasEntregas();
         List<Devolucion> devolucionesObtenidas = DBHandler.obtenerTodasLasDevoluciones();

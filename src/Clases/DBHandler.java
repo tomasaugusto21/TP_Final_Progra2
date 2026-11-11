@@ -199,7 +199,7 @@ public class DBHandler {
         }
         return entregas;
     }
-    
+
 
     public static int agregar_vehiculo(Vehiculo vehiculo) {
 
