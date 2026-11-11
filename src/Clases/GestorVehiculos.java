@@ -14,6 +14,18 @@ public class GestorVehiculos {
     private final Almacen<Vehiculo> vehiculos = new Almacen<>();
 
 
+
+    public void descargarDatosBDD () throws ObjetoInvalidoEx, ObjetoDuplicadoEx, ValidacionEx {
+
+        List<Vehiculo> obtenidos = DBHandler.obtenerTodosLosVehiculos();
+
+        for (Vehiculo v : obtenidos){
+            vehiculos.agregar(v);
+        }
+
+    }
+
+
     public boolean agregarAuto (String patente, String marca, String modelo, int anio, double kilometraje, double precioPorHora, int cantidadDePuertas, boolean ruedaDeAuxilio) throws ValidacionEx, ObjetoInvalidoEx, ObjetoDuplicadoEx {
 
         if (patente == null || patente.isBlank()){
@@ -249,7 +261,7 @@ public class GestorVehiculos {
         List<Vehiculo> resultado = new ArrayList<>();
 
         for (Vehiculo v : vehiculos.listarTodos()) {
-            if (v.getEstadoVehiculo() == EstadoVehiculo.DISPONIBLE || v.getEstadoVehiculo() == EstadoVehiculo.RESERVADO) {
+            if (v.getEstadoVehiculo() == EstadoVehiculo.DISPONIBLE) {
                 resultado.add(v);
             }
         }

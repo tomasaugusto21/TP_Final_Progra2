@@ -7,9 +7,69 @@ import Excepciones.ErrorDeCargaEx;
 
 import java.sql.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DBHandler {
     private static final String url = "jdbc:sqlite:alquiler.db?foreign_keys=on";
+
+
+
+    public static List<Vehiculo> obtenerTodosLosVehiculos() {
+        List<Vehiculo> vehiculos = new ArrayList<>();
+
+        String SELECT_QUERY = "SELECT v.id, v.patente, v.marca, v.modelo, v.anio, v.kilometraje, "
+                + "v.precio_por_hora, v.estado, "
+                + "a.id AS id_auto, a.cantidad_puertas, a.tiene_rueda_auxilio, "
+                + "c.id AS id_carga, c.precio_por_kg, c.capacidad_carga "
+                + "FROM vehiculo v "
+                + "LEFT JOIN auto a ON a.id = v.id "
+                + "LEFT JOIN vehiculo_de_carga c ON c.id = v.id";
+
+        try (Connection connection = DriverManager.getConnection(url);
+             PreparedStatement statement = connection.prepareStatement(SELECT_QUERY);
+             ResultSet rs = statement.executeQuery()) {
+
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String patente = rs.getString("patente");
+                String marca = rs.getString("marca");
+                String modelo = rs.getString("modelo");
+                int anio = rs.getInt("anio");
+                double kilometraje = rs.getDouble("kilometraje");
+                double precioPorHora = rs.getDouble("precio_por_hora");
+                EstadoVehiculo estado = EstadoVehiculo.valueOf(rs.getString("estado"));
+
+                Vehiculo vehiculo = null;
+
+                if (rs.getObject("id_auto") != null) {
+                    vehiculo = new Auto(patente, marca, modelo, anio, kilometraje, precioPorHora, estado,
+                            rs.getInt("cantidad_puertas"),
+                            rs.getInt("tiene_rueda_auxilio") == 1);
+                } else if (rs.getObject("id_carga") != null) {
+                    vehiculo = new VehiculoDeCarga(patente, marca, modelo, anio, kilometraje, precioPorHora, estado,
+                            rs.getDouble("precio_por_kg"),
+                            rs.getDouble("capacidad_carga"));
+                }
+
+                if (vehiculo != null) {
+                    vehiculo.setId(id);
+                    vehiculos.add(vehiculo);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return vehiculos;
+    }
+
+
+
+
+
+
+
 
     public static int agregar_vehiculo(Vehiculo vehiculo) {
 
