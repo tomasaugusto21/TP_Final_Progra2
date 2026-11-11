@@ -42,7 +42,7 @@ public class GestorAlquileres {
     }
 
 
-    public boolean hacerEntrega (int idCliente, int idVehiculo, int idEmpleado, int idReserva, String fechaDevolucionPrevista, double kmEntrega, double kgTransportados) throws ObjetoNoEncontradoEx, ValidacionEx, ObjetoInvalidoEx {
+    public boolean hacerEntrega (int idCliente, int idVehiculo, int idEmpleado, int idReserva, String fechaDevolucionPrevista, double kgTransportados) throws ObjetoNoEncontradoEx, ValidacionEx, ObjetoInvalidoEx {
 
         gestorReservas.actualizarReservasExpiradas();
 
@@ -256,7 +256,7 @@ public class GestorAlquileres {
         return resultado;
     }
 
-    public List<Entrega> historialDeCliente(Cliente cliente) throws ObjetoInvalidoEx {
+    public List<Entrega> historialDeClienteEntregas (Cliente cliente) throws ObjetoInvalidoEx {
 
         if (cliente == null){
             throw new ObjetoInvalidoEx("El cliente del cual se busca listar su historial no puede ser nulo");

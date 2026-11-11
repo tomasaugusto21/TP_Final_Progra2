@@ -5,6 +5,7 @@ import Enums.EstadoVehiculo;
 import Enums.RolDeUsuario;
 import Excepciones.*;
 
+import javax.print.DocFlavor;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -387,6 +388,136 @@ public class Sistema {
     }
 
 
-    
+
+
+    //metodos del gestor de alquileres
+
+
+    public boolean registrarEntrega (int idCliente, int idVehiculo, int idEmpleado, int idReserva, String fechaDevolucionPrevista, double kgTransportados) throws ObjetoNoEncontradoEx, ObjetoInvalidoEx, ValidacionEx, PermisosEx {
+
+        if (this.logueado.getRol() != RolDeUsuario.EMPLEADO){
+            throw new PermisosEx("Los clientes no pueden registrar entregas");
+        }
+
+        return gestorAlquileres.hacerEntrega(idCliente, idVehiculo, idEmpleado, idReserva, fechaDevolucionPrevista, kgTransportados);
+    }
+
+    public boolean actualizarFechaDevolucionPrevistaEntrega (int id, String nuevaFecha) throws PermisosEx, ObjetoNoEncontradoEx, ObjetoInvalidoEx, ValidacionEx {
+
+        if (this.logueado.getRol() == RolDeUsuario.CLIENTE){
+            throw new PermisosEx("Si el cliente desea actualizar la fecha de devolucion debe consultar con un empleado");
+        }
+        return gestorAlquileres.actualizarFechaDevolucionPrevista(id, nuevaFecha);
+    }
+
+    public boolean actualizarEmpleadoDeEntrega(int idEntrega, int nuevoIdEmpleado) throws PermisosEx, ObjetoNoEncontradoEx, ObjetoInvalidoEx, ValidacionEx {
+
+        if (this.logueado.getRol() == RolDeUsuario.CLIENTE){
+            throw new PermisosEx("Los clientes no pueden actualizar el empleado que realizo la entrega");
+        }
+        return gestorAlquileres.actualizarEmpleadoDeEntrega(idEntrega, nuevoIdEmpleado);
+    }
+
+    public boolean registrarDevolucion (int idEntrega, int idEmpleado, double kmFinal) throws PermisosEx, ObjetoNoEncontradoEx, ObjetoInvalidoEx, ValidacionEx {
+
+        if (this.logueado.getRol() != RolDeUsuario.EMPLEADO){
+            throw new PermisosEx("Los clientes no pueden registrar devoluciones");
+        }
+
+        return gestorAlquileres.hacerDevolucion(idEntrega, idEmpleado, kmFinal);
+    }
+
+    public boolean actualizarEmpleadoDeDevolucion(int idDevolucion, int nuevoIdEmpleado) throws PermisosEx, ObjetoNoEncontradoEx, ObjetoInvalidoEx, ValidacionEx {
+
+        if (this.logueado.getRol() == RolDeUsuario.CLIENTE){
+            throw new PermisosEx("Los clientes no pueden actualizar el empleado que realizo la devolucion");
+        }
+
+        return gestorAlquileres.actualizarEmpleadoDeDevolucion(idDevolucion, nuevoIdEmpleado);
+    }
+
+    public String verInfoEntrega (int id) throws ObjetoInvalidoEx {
+
+        Entrega e = gestorAlquileres.buscarEntregaPorId(id);
+
+        if (e == null){
+            throw new ObjetoInvalidoEx("La entrega buscada no existe");
+        }
+        return e.toString();
+    }
+
+    public String verInfoDevolucion (int id) throws ObjetoInvalidoEx {
+
+        Devolucion d = gestorAlquileres.buscarDevolucionPorId(id);
+
+        if (d == null){
+            throw new ObjetoInvalidoEx("La entrega buscada no existe");
+        }
+        return d.toString();
+    }
+
+    public String listarEntregasActivas () throws PermisosEx {
+
+        if (this.logueado.getRol() == RolDeUsuario.CLIENTE){
+            throw new PermisosEx("Los clientes no pueden acceder a la informacion de todas las entregas activas");
+        }
+
+        StringBuilder sb = new StringBuilder();
+        List<Entrega> activas = gestorAlquileres.listarActualmenteAlquilados();
+
+        for (Entrega e : activas){
+            sb.append(e.toString()).append("\n");
+        }
+        return sb.toString();
+    }
+
+    public String verHistorialDeClienteEntregas (int id) throws PermisosEx, ObjetoNoEncontradoEx, ValidacionEx, ObjetoInvalidoEx {
+
+        if (this.logueado.getRol() == RolDeUsuario.CLIENTE && this.logueado.getID() != id){
+            throw new PermisosEx("Los clientes no pueden acceder al historial de otros clientes");
+        }
+
+        StringBuilder sb = new StringBuilder();
+        Cliente c = gestorUsuarios.buscarCliente(id);
+        List<Entrega> entregas = gestorAlquileres.historialDeClienteEntregas(c);
+
+        for (Entrega e : entregas){
+            sb.append(e.toString()).append("\n");
+        }
+        return sb.toString();
+    }
+
+    public String verEntregas () throws PermisosEx {
+
+        if (this.logueado.getRol() == RolDeUsuario.CLIENTE){
+            throw new PermisosEx("Los clientes no tienen permiso para acceder a todas las entregas");
+        }
+
+        StringBuilder sb = new StringBuilder();
+
+        List<Entrega> entregas = gestorAlquileres.listarEntregas();
+
+        for (Entrega e : entregas){
+            sb.append(e.toString()).append("\n");
+        }
+        return sb.toString();
+    }
+
+    public String verDevoluciones () throws PermisosEx {
+
+        if (this.logueado.getRol() == RolDeUsuario.CLIENTE){
+            throw new PermisosEx("Los clientes no tienen permiso para acceder a todas las devoluciones");
+        }
+
+        StringBuilder sb = new StringBuilder();
+
+        List<Devolucion> devoluciones = gestorAlquileres.listarDevoluciones();
+
+        for (Devolucion d : devoluciones){
+            sb.append(d.toString()).append("\n");
+        }
+        return sb.toString();
+    }
+
 
 }
