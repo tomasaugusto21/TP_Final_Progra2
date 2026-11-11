@@ -506,7 +506,7 @@ public class DBHandler {
         try (Connection connection = DriverManager.getConnection(url);
              PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY)) {
 
-            statement.setString(1,nueva_hora_inicio.toLocalTime().toString());
+            statement.setString(1, nueva_hora_inicio.toString());
             statement.setInt(2, id_actualizar);
 
             filas_alteradas = statement.executeUpdate();
@@ -540,7 +540,7 @@ public class DBHandler {
         try (Connection connection = DriverManager.getConnection(url);
              PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY)) {
 
-            statement.setString(1,nueva_fecha_inicio.toString());
+            statement.setString(1, nueva_fecha_inicio.toLocalDate().atStartOfDay().toString());
             statement.setInt(2, id_actualizar);
 
             filas_alteradas = statement.executeUpdate();
@@ -558,7 +558,7 @@ public class DBHandler {
         try (Connection connection = DriverManager.getConnection(url);
              PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY)) {
 
-            statement.setString(1,nueva_fecha_fin.toString());
+            statement.setString(1, nueva_fecha_fin.toLocalDate().atStartOfDay().toString());
             statement.setInt(2, id_actualizar);
 
             filas_alteradas = statement.executeUpdate();

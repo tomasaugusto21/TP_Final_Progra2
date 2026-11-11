@@ -34,22 +34,6 @@ public class Almacen <T extends Identificable>{
 
     }
 
-    public void eliminar(int id) throws ValidacionEx {
-        boolean encontrado = false;
-        for (T e : elementos.values()) {
-            if (e.getID() == id) {
-                encontrado = true;
-                break;
-            }
-        }
-
-        if (!encontrado) {
-            throw new ValidacionEx("No se encontró ningún elemento con el ID: " + id);
-        }
-
-        elementos.remove(id);
-    }
-
     public T buscarPorId(int id) throws ValidacionEx {
         for (T e : elementos.values()) {
             if (e.getID() == id) {
@@ -77,7 +61,4 @@ public class Almacen <T extends Identificable>{
         return elementos.containsValue(obj);
     }
 
-    public Map<Integer, T> getElementos() {
-        return elementos;
-    }
 }

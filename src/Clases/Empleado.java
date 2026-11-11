@@ -24,13 +24,5 @@ public class Empleado extends Usuario{
         this.legajo = legajo;
     }
 
-    //faltarian los metodos para registrar entrega o devolucion pero por ahora no sabemos si son necesarios
 
-    public void registrarEntrega() {
-        System.out.println("Empleado registrando entrega de vehículo.");
-    }
-
-    public void registrarDevolucion() {
-        System.out.println("Empleado registrando devolución de vehículo.");
-    }
 }

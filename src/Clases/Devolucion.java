@@ -42,10 +42,6 @@ public class Devolucion {
         return idEntrega;
     }
 
-    public void setIdEntrega(int idEntrega) {
-        this.idEntrega = idEntrega;
-    }
-
     public int getIdEmpleado() {
         return idEmpleado;
     }

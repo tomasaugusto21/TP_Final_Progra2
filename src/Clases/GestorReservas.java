@@ -35,9 +35,11 @@ public class GestorReservas {
 
 
 
-    public boolean crearReserva (int idCliente, int idVehiculo, String horaInicio, String horaFin, String fechaInicio, String fechaFin) throws ValidacionEx, ObjetoInvalidoEx, ObjetoDuplicadoEx {
+    public boolean crearReserva (int idCliente, int idVehiculo, String horaInicio, String horaFin, String fechaInicio, String fechaFin) throws ValidacionEx, ObjetoInvalidoEx, ObjetoDuplicadoEx, ObjetoNoEncontradoEx {
 
-        gestorUsuarios.buscarPorId(idCliente);
+        actualizarReservasExpiradas();
+
+        gestorUsuarios.buscarCliente(idCliente);
         Vehiculo vehiculo = gestorVehiculos.buscarPorId(idVehiculo);
 
         LocalDateTime momentoInicio = leerFechaHora(fechaInicio, horaInicio);
@@ -71,12 +73,13 @@ public class GestorReservas {
 
         reserva.setId(id);
         reservas.agregar(reserva);
-        vehiculo.setEstadoVehiculo(EstadoVehiculo.RESERVADO);
 
         return true;
     }
 
     public boolean actualizarHoraInicioReserva (int id, String nuevaHora) throws ValidacionEx, ObjetoInvalidoEx {
+
+        actualizarReservasExpiradas();
 
         Reserva reserva = reservas.buscarPorId(id);
         if (reserva.getEstado() != EstadoReserva.VIGENTE) {
@@ -109,6 +112,8 @@ public class GestorReservas {
 
     public boolean actualizarHoraFinReserva (int id, String nuevaHora) throws ObjetoInvalidoEx, ValidacionEx {
 
+        actualizarReservasExpiradas();
+
         Reserva reserva = reservas.buscarPorId(id);
         if (reserva.getEstado() != EstadoReserva.VIGENTE) {
             throw new ObjetoInvalidoEx("Solo se puede modificar una reserva cuyo estado sea VIGENTE");
@@ -139,6 +144,8 @@ public class GestorReservas {
     }
 
     public boolean actualizarFechaInicioReserva (int id, String nuevaFecha) throws ValidacionEx, ObjetoInvalidoEx {
+
+        actualizarReservasExpiradas();
 
         Reserva reserva = reservas.buscarPorId(id);
         if (reserva.getEstado() != EstadoReserva.VIGENTE) {
@@ -182,6 +189,8 @@ public class GestorReservas {
 
     public boolean actualizarFechaFinReserva (int id, String nuevaFecha) throws ObjetoInvalidoEx, ValidacionEx {
 
+        actualizarReservasExpiradas();
+
         Reserva reserva = reservas.buscarPorId(id);
         if (reserva.getEstado() != EstadoReserva.VIGENTE) {
             throw new ObjetoInvalidoEx("Solo se puede modificar una reserva cuyo estado sea VIGENTE");
@@ -222,6 +231,8 @@ public class GestorReservas {
     }
 
     public boolean actualizarEstadoDeReserva (int id, EstadoReserva nuevoEstado) throws ValidacionEx, ObjetoInvalidoEx {
+
+        actualizarReservasExpiradas();
 
         if (nuevoEstado == null){
             throw new ValidacionEx("El nuevo estado de la reserva no puede ser nulo");
@@ -295,22 +306,9 @@ public class GestorReservas {
         return null;
     }
 
-
-    public Reserva buscarVigenteDeVehiculo(Vehiculo vehiculo) throws ObjetoInvalidoEx {
-
-        if (vehiculo == null){
-            throw new ObjetoInvalidoEx("El vehiculo del que se quieren obtener sus reservas vigentes no puede ser nulo");
-        }
-
-        for (Reserva r : reservas.listarTodos()) {
-            if (r.getEstado() == EstadoReserva.VIGENTE && r.getIdVehiculo() == vehiculo.getID()) {
-                return r;
-            }
-        }
-        return null;
-    }
-
     public List<Reserva> listarDeCliente(Cliente cliente) throws ObjetoInvalidoEx {
+
+        actualizarReservasExpiradas();
 
         if (cliente == null){
             throw new ObjetoInvalidoEx("El cliente del cual se quieren listar sus reservas no puede ser nulo");
@@ -327,6 +325,14 @@ public class GestorReservas {
 
 
     private LocalDateTime leerFechaHora(String fecha, String hora) throws ValidacionEx {
+
+        if (fecha == null || fecha.isBlank()){
+            throw new ValidacionEx("La fecha no puede ser nula o estar en blanco");
+        }
+        if (hora == null || hora.isBlank()){
+            throw new ValidacionEx("La hoa no puede ser nula o estar en blanco");
+        }
+
         try {
             LocalDate f = LocalDate.parse(fecha, FORMATO_FECHA);
             LocalTime h = LocalTime.parse(hora, FORMATO_HORA);
@@ -339,12 +345,12 @@ public class GestorReservas {
     private LocalTime leerHora(String hora) throws ValidacionEx {
 
         if (hora == null || hora.isBlank()) {
-            throw new ValidacionEx("La hora es obligatoria");
+            throw new ValidacionEx("La hora no puede ser nula o estar en blanco");
         }
         try {
             return LocalTime.parse(hora, FORMATO_HORA);
         } catch (DateTimeException e) {
-            throw new ValidacionEx("Hora inválida. Use HH:mm");
+            throw new ValidacionEx("Hora inválida. El formato correcto es: HH:mm");
         }
     }
 

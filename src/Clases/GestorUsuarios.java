@@ -11,7 +11,7 @@ public class GestorUsuarios {
 
 
 
-    public Cliente Signup (String nombre, String apellido, int dni, String email, String username, String numeroDeLicencia, String telefono, String domicilio, String contraseña) throws ValidacionEx, ObjetoDuplicadoEx, ObjetoInvalidoEx, ErrorDeCargaEx {
+    public Cliente signup (String nombre, String apellido, int dni, String email, String username, String numeroDeLicencia, String telefono, String domicilio, String contraseña) throws ValidacionEx, ObjetoDuplicadoEx, ObjetoInvalidoEx, ErrorDeCargaEx {
 
         validarPassword(contraseña);
 
@@ -47,7 +47,7 @@ public class GestorUsuarios {
         int id = DBHandler.agregar_usuario(nuevo, contraseña);
 
         if (id == -1){
-            return null;
+            throw new ErrorDeCargaEx("Ocurrió un error al crear el signup en la base de datos");
         }
 
         nuevo.setId(id);
@@ -73,7 +73,7 @@ public class GestorUsuarios {
         return usuario;
     }
 
-    public Empleado crearEmpleado (String nombre, String apellido, int dni, String email, String username, String legajo, String contraseña) throws ValidacionEx, ObjetoDuplicadoEx, ObjetoInvalidoEx {
+    public Empleado crearEmpleado (String nombre, String apellido, int dni, String email, String username, String legajo, String contraseña) throws ValidacionEx, ObjetoDuplicadoEx, ObjetoInvalidoEx, ErrorDeCargaEx {
 
         validarPassword(contraseña);
 
@@ -103,7 +103,7 @@ public class GestorUsuarios {
         int id = DBHandler.agregar_usuario(nuevo, contraseña);
 
         if (id == -1){
-            return null;
+            throw new ErrorDeCargaEx("Ocurrió un error al crear el empleado en la base de datos");
         }
 
         nuevo.setId(id);
@@ -114,6 +114,10 @@ public class GestorUsuarios {
 
 
     public boolean actualizarNombre (int id, String nuevoNombre) throws ValidacionEx {
+
+        if (nuevoNombre == null || nuevoNombre.isBlank()){
+            throw new ValidacionEx("El nuevo nombre no puede ser nulo ni estar en blanco");
+        }
 
         Usuario buscado = buscarPorId(id);
 
@@ -126,6 +130,10 @@ public class GestorUsuarios {
 
     public boolean actualizarApellido (int id, String nuevoApellido) throws ValidacionEx {
 
+        if (nuevoApellido == null || nuevoApellido.isBlank()){
+            throw new ValidacionEx("El nuevo apellido no puede ser nulo ni estar en blanco");
+        }
+
         Usuario buscado = buscarPorId(id);
 
         if (DBHandler.actualizar_usuario_apellido(id, nuevoApellido) == 1){
@@ -137,6 +145,10 @@ public class GestorUsuarios {
 
     public boolean actualizarEmail (int id, String nuevoEmail) throws ValidacionEx {
 
+        if (nuevoEmail == null || nuevoEmail.isBlank()){
+            throw new ValidacionEx("El nuevo email no puede ser nulo ni estar en blanco");
+        }
+
         Usuario buscado = buscarPorId(id);
 
         if (DBHandler.actualizar_usuario_email(id, nuevoEmail) == 1){
@@ -146,7 +158,17 @@ public class GestorUsuarios {
         return false;
     }
 
-    public boolean actualizarUsername (int id, String nuevoUsername) throws ValidacionEx {
+    public boolean actualizarUsername (int id, String nuevoUsername) throws ValidacionEx, ObjetoDuplicadoEx {
+
+        if (nuevoUsername == null || nuevoUsername.isBlank()) {
+            throw new ValidacionEx("El nuevo username no puede ser nulo ni estar en blanco");
+        }
+
+        for (Usuario u : usuarios.listarTodos()){
+            if (u.getID() != id && u.getUsername().equalsIgnoreCase(nuevoUsername)){
+                throw new ObjetoDuplicadoEx("Ya existe un usuario con ese username");
+            }
+        }
 
         Usuario buscado = buscarPorId(id);
 
@@ -158,6 +180,10 @@ public class GestorUsuarios {
     }
 
     public boolean actualizarLegajo (int id, String nuevoLegajo) throws ValidacionEx, ObjetoInvalidoEx {
+
+        if (nuevoLegajo == null || nuevoLegajo.isBlank()){
+            throw new ValidacionEx("El nuevo legajo no puede ser nulo ni estar en blanco");
+        }
 
         Usuario buscado = buscarPorId(id);
 
@@ -174,6 +200,10 @@ public class GestorUsuarios {
 
     public boolean actualizarTelefonoCliente (int id, String nuevoTelefono) throws ValidacionEx, ObjetoInvalidoEx {
 
+        if (nuevoTelefono == null || nuevoTelefono.isBlank()){
+            throw new ValidacionEx("El nuevo telefono no puede ser nulo ni estar en blanco");
+        }
+
         Usuario buscado = buscarPorId(id);
 
         if (!(buscado instanceof Cliente)){
@@ -189,10 +219,14 @@ public class GestorUsuarios {
 
     public boolean actualizarDomicilioCliente (int id, String nuevoDomicilio) throws ObjetoInvalidoEx, ValidacionEx {
 
+        if (nuevoDomicilio == null || nuevoDomicilio.isBlank()){
+            throw new ValidacionEx("El nuevo domicilio no puede ser nulo ni estar en blanco");
+        }
+
         Usuario buscado = buscarPorId(id);
 
         if (!(buscado instanceof Cliente)){
-            throw new ObjetoInvalidoEx("No se puede actualizar el telefono de un Usuario que no es Cliente");
+            throw new ObjetoInvalidoEx("No se puede actualizar el domicilio de un Usuario que no es Cliente");
         }
 
         if (DBHandler.actualizar_cliente_domicilio(id, nuevoDomicilio) == 1){

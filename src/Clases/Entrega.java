@@ -88,10 +88,6 @@ public class Entrega {
         this.fechaDevolucionPrevista = fechaDevolucionPrevista;
     }
 
-    public void setKmEntrega(double kmEntrega) {
-        this.kmEntrega = kmEntrega;
-    }
-
     public void setIdEmpleado(int idEmpleado) {
         this.idEmpleado = idEmpleado;
     }

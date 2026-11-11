@@ -103,22 +103,16 @@ public abstract class Vehiculo implements Identificable {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Vehiculo vehiculo = (Vehiculo) o;
-        return id == vehiculo.id && Objects.equals(patente, vehiculo.patente);
+        return Objects.equals(patente, vehiculo.patente);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, patente);
+        return Objects.hashCode(patente);
     }
 
     //metodo para calcular el alquiler
     public abstract double calcularCostoAlquiler(Entrega entrega);
 
-    //Metodo para actualizar el kilometraje
-    public void actualizarKilometraje(double kmRecorridos) {
-        if (kmRecorridos > 0) {
-            this.kilometraje += kmRecorridos;
-        }
-    }
 
 }

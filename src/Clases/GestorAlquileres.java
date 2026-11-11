@@ -34,7 +34,12 @@ public class GestorAlquileres {
         gestorReservas.actualizarReservasExpiradas();
 
         gestorUsuarios.buscarCliente(idCliente);
+        gestorUsuarios.buscarEmpleado(idEmpleado);
         Vehiculo v = gestorVehiculos.buscarPorId(idVehiculo);
+
+        if (fechaDevolucionPrevista == null || fechaDevolucionPrevista.isBlank()){
+            throw new ValidacionEx("La fecha de devolucion prevista no puede ser nula o estar en blanco");
+        }
 
         LocalDateTime fechaDevolucion;
         try {
@@ -42,30 +47,19 @@ public class GestorAlquileres {
         } catch (DateTimeParseException e) {
             throw new ValidacionEx("El formato de la fecha y hora es inválido. El formato correcto es: yyyy-MM-dd HH:mm");
         }
-
-        if (kmEntrega <= 0){
-            throw new ValidacionEx("El auto debe haber recorrido un numero de km mayor a cero");
-        }
-
         if (kgTransportados < 0){
             throw new ValidacionEx("No se puede transportar un numero negativo de kg");
         }
-
         if (v instanceof VehiculoDeCarga){
-
             if (((VehiculoDeCarga) v).getCapacidadDeCargaKg() < kgTransportados){
                 throw new ValidacionEx("No se pueden transportar mas kg de los que indica la capacidad del vehiculo");
             }
-
         }
-
         if (!fechaDevolucion.isAfter(LocalDateTime.now())) {
             throw new ValidacionEx("La fecha de devolución debe ser posterior al momento actual");
         }
-
-        if (v.getEstadoVehiculo() == EstadoVehiculo.ALQUILADO || v.getEstadoVehiculo() == EstadoVehiculo.EN_LIMPIEZA ||
-                v.getEstadoVehiculo() == EstadoVehiculo.EN_REPARACION || v.getEstadoVehiculo() == EstadoVehiculo.FUERA_DE_SERVICIO) {
-            throw new ObjetoInvalidoEx("El vehículo no esta disponible para realizar la entrega");
+        if (v.getEstadoVehiculo() != EstadoVehiculo.DISPONIBLE) {
+            throw new ObjetoInvalidoEx("El vehículo no está disponible para realizar la entrega (estado: " + v.getEstadoVehiculo() + ")");
         }
 
         Reserva reserva = null;
@@ -104,32 +98,44 @@ public class GestorAlquileres {
         return true;
     }
 
-    public boolean actualizarFechaDevolucionPrevista (int id, String nuevaFecha) throws ValidacionEx {
+    //solo permite actualizar la fecha moviendola para más adelante
+    public boolean actualizarFechaDevolucionPrevista (int id, String nuevaFecha) throws ValidacionEx, ObjetoInvalidoEx, ObjetoNoEncontradoEx {
 
-        LocalDateTime nuevaFechaDevolucion;
-        try {
-            nuevaFechaDevolucion = LocalDateTime.parse(nuevaFecha, FORMATO_FECHA_HORA);
-        } catch (DateTimeParseException e) {
-            throw new ValidacionEx("El formato de la fecha y hora es inválido. El formato correcto es: yyyy-MM-dd HH:mm");
-        }
-
-        if (!nuevaFechaDevolucion.isAfter(LocalDateTime.now())) {
-            throw new ValidacionEx("La fecha de devolución debe ser posterior al momento actual");
-        }
+        gestorReservas.actualizarReservasExpiradas();
 
         Entrega e = buscarEntregaPorId(id);
-
-        if (e ==null){
-            return false;
+        if (e == null) {
+            throw new ObjetoNoEncontradoEx("No existe una entrega con ese id");
+        }
+        if (!e.isActiva()) {
+            throw new ObjetoInvalidoEx("La entrega ya fue devuelta y no se puede modificar su fecha de devolucion");
         }
 
-        if (DBHandler.actualizar_entrega_fecha_devolucion(id, nuevaFechaDevolucion) == 0){
+        if (nuevaFecha == null || nuevaFecha.isBlank()) {
+            throw new ValidacionEx("La nueva fecha de devolución es obligatoria");
+        }
+        LocalDateTime nuevaFechaDevolucion;
+        try {
+            nuevaFechaDevolucion = LocalDateTime.parse(nuevaFecha.trim(), FORMATO_FECHA_HORA);
+        } catch (DateTimeParseException ex) {
+            throw new ValidacionEx("El formato de la fecha y hora es invalido. El formato correcto es: yyyy-MM-dd HH:mm");
+        }
+        if (!nuevaFechaDevolucion.isAfter(e.getFechaDevolucionPrevista())) {
+            throw new ValidacionEx("La nueva fecha debe ser posterior a la devolución prevista actual");
+        }
+
+        Vehiculo v = gestorVehiculos.buscarPorId(e.getIdVehiculo());
+        if (gestorReservas.buscarCruceDeFechas(v, e.getFechaDevolucionPrevista(), nuevaFechaDevolucion) != null) {
+            throw new ObjetoInvalidoEx("El vehículo tiene una reserva en el tiempo que se quiere extender esta entrega");
+        }
+
+        if (DBHandler.actualizar_entrega_fecha_devolucion(id, nuevaFechaDevolucion) == 0) {
             return false;
         }
 
         e.setFechaDevolucionPrevista(nuevaFechaDevolucion);
-
         return true;
+
     }
 
     public boolean actualizarEmpleadoDeEntrega(int idEntrega, int nuevoIdEmpleado) throws ObjetoNoEncontradoEx, ObjetoInvalidoEx, ValidacionEx {

@@ -184,8 +184,7 @@ public class GestorVehiculos {
         return false;
     }
 
-    public boolean cambiarEstadoVehiculo(String patente, EstadoVehiculo estadoNuevo)
-            throws ObjetoNoEncontradoEx, ValidacionEx, ObjetoInvalidoEx {
+    public boolean cambiarEstadoVehiculo(String patente, EstadoVehiculo estadoNuevo) throws ObjetoNoEncontradoEx, ValidacionEx, ObjetoInvalidoEx {
 
         if (estadoNuevo == null) {
             throw new ValidacionEx("El nuevo estado no puede ser nulo");
@@ -200,7 +199,7 @@ public class GestorVehiculos {
             throw new ObjetoInvalidoEx("El estado ALQUILADO solo se asigna al registrar una entrega");
         }
         if (buscado.getEstadoVehiculo() == estadoNuevo) {
-            throw new ObjetoInvalidoEx("El vehículo ya está en estado ");
+            throw new ObjetoInvalidoEx("El vehículo ya está en el estado que se quiere modificar");
         }
 
         if (DBHandler.cambiar_estado(buscado.getID(), estadoNuevo) == 1) {
@@ -250,7 +249,7 @@ public class GestorVehiculos {
         List<Vehiculo> resultado = new ArrayList<>();
 
         for (Vehiculo v : vehiculos.listarTodos()) {
-            if (v.getEstadoVehiculo() == EstadoVehiculo.DISPONIBLE) {
+            if (v.getEstadoVehiculo() == EstadoVehiculo.DISPONIBLE || v.getEstadoVehiculo() == EstadoVehiculo.RESERVADO) {
                 resultado.add(v);
             }
         }
