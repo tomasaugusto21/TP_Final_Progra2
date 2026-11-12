@@ -261,7 +261,7 @@ public class Main {
         } while (opcionCliente != 0);
     }
     public static void menuEmpleado(Scanner scanner, Sistema sistema) {
-        int opcion;
+        int opcionEmpleado;
         do {
             System.out.println("\n========== MENÚ EMPLEADO ==========");
             System.out.println("1. Ver vehículos");
@@ -285,11 +285,11 @@ public class Main {
             System.out.println("0. Volver");
             System.out.print("Seleccione una opción: ");
 
-            opcion = scanner.nextInt();
+            opcionEmpleado = scanner.nextInt();
             scanner.nextLine();
 
             try {
-                switch (opcion) {
+                switch (opcionEmpleado) {
                     case 1:
                         System.out.println(sistema.verVehiculos());
                         break;
@@ -317,6 +317,7 @@ public class Main {
                     case 7:
                         System.out.print("Patente del vehículo: ");
                         String patVehiculo = scanner.nextLine();
+                        System.out.println("Función de cruce disponible a través de parámetros de fecha/hora.");
                         break;
                     case 8:
                         System.out.print("ID Reserva: ");
@@ -327,34 +328,47 @@ public class Main {
                         sistema.actualizarEstadoDeReserva(idReserv, EstadoReserva.valueOf(estado));
                         System.out.println("Estado de reserva actualizado.");
                         break;
-                    //me comi el case 9 lo hago desp
+                    case 9:
+                        int cantExpiradas = sistema.actualizarReservasExpiradas();
+                        System.out.println("Actualización manual: Se actualizaron " + cantExpiradas + " reservas expiradas.");
+                        break;
                         case 10:
                         System.out.print("ID Cliente: ");
-                        int cliEnt = scanner.nextInt();
+                        int clienteEntrega = scanner.nextInt();
                         System.out.print("ID Vehículo: ");
-                        int vehEnt = scanner.nextInt();
+                        int vehiculoEntrega = scanner.nextInt();
                         System.out.print("ID Empleado: ");
-                        int empEnt = scanner.nextInt();
+                        int empleadoEntrega = scanner.nextInt();
                         System.out.print("ID Reserva (0 si no tiene): ");
-                        int resEnt = scanner.nextInt();
+                        int reservaEntrega = scanner.nextInt();
                         scanner.nextLine();
                         System.out.print("Fecha devolución prevista (yyyy-MM-dd HH:mm): ");
-                        String fDevPrev = scanner.nextLine();
+                        String fDevPrevEntrega = scanner.nextLine();
                         System.out.print("Kg transportados (0 si es auto): ");
-                        double kgTrans = scanner.nextDouble();
+                        double kgTranspEntrega = scanner.nextDouble();
                         scanner.nextLine();
-
-                        //if else
+                        boolean entregaOK = sistema.registrarEntrega(clienteEntrega,vehiculoEntrega,empleadoEntrega,reservaEntrega,fDevPrevEntrega,kgTranspEntrega);
+                        if(entregaOK){
+                            System.out.println("Entrega registrada con exito.");
+                        }else{
+                            System.out.println("Error al registrar la entrega.");
+                        }
+                        break;
                     case 11:
                         System.out.print("ID Entrega: ");
-                        int idEntDev = scanner.nextInt();
+                        int idEntDevolucion = scanner.nextInt();
                         System.out.print("ID Empleado: ");
-                        int idEmpDev = scanner.nextInt();
+                        int idEmpDevolucion = scanner.nextInt();
                         System.out.print("Kilometraje final: ");
-                        double kmFin = scanner.nextDouble();
+                        double kmFinDevolucion = scanner.nextDouble();
                         scanner.nextLine();
-
-                       //if else
+                        boolean devolucionOK = sistema.registrarDevolucion(idEntDevolucion,idEmpDevolucion,kmFinDevolucion);
+                        if(devolucionOK){
+                            System.out.println("Devolucion registrada con exito.");
+                        }else{
+                            System.out.println("Error al registrar devolucion.");
+                        }
+                        break;
                     case 12:
                         System.out.println(sistema.listarEntregasActivas());
                         break;
@@ -407,6 +421,227 @@ public class Main {
             } catch (Exception e) {
                 System.out.println("Error de ejecución: " + e.getMessage());
             }
-        } while (opcion != 0);
+        } while (opcionEmpleado != 0);
+    }
+
+    public static void menuAdministrador(Scanner scanner, Sistema sistema) {
+        int opcionAdministrador;
+        do {
+            System.out.println("\n========== MENÚ ADMINISTRADOR ==========");
+            System.out.println("1. Gestionar vehículos (Agregar autos/carga, actualizar precios)");
+            System.out.println("2. Gestionar usuarios (Crear empleado, ver empleados/clientes)");
+            System.out.println("3. Ver reportes generales de reservas y entregas");
+            System.out.println("0. Volver");
+            System.out.print("Seleccione una opción: ");
+
+            opcionAdministrador = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (opcionAdministrador) {
+                case 1:
+                    menuGestionVehiculos(scanner, sistema);
+                    break;
+                case 2:
+                    try {
+                        System.out.println("\n--- GESTIÓN DE USUARIOS ---");
+                        System.out.println("1. Crear Empleado");
+                        System.out.println("2. Ver Empleados");
+                        System.out.println("3. Ver Clientes");
+                        int opcionUsuario = scanner.nextInt();
+                        scanner.nextLine();
+
+                        if (opcionUsuario == 1) {
+                            System.out.print("Nombre: ");
+                            String name = scanner.nextLine();
+                            System.out.print("Apellido: ");
+                            String lastName = scanner.nextLine();
+                            System.out.print("DNI: ");
+                            int dni = scanner.nextInt();
+                            scanner.nextLine();
+                            System.out.print("Email: ");
+                            String email = scanner.nextLine();
+                            System.out.print("Username: ");
+                            String username = scanner.nextLine();
+                            System.out.print("Legajo: ");
+                            String legajo = scanner.nextLine();
+                            System.out.print("Contraseña: ");
+                            String password = scanner.nextLine();
+
+                            sistema.crearEmpleado(name,lastName,dni,email,username,legajo,password);
+                            System.out.println("¡Empleado creado con éxito!");
+                        } else if (opcionUsuario == 2) {
+                            System.out.println(sistema.verEmpleados());
+                        } else if (opcionUsuario == 3) {
+                            System.out.println(sistema.verClientes());
+                        }
+                    } catch (Exception e) {
+                        System.out.println("Error en gestión de usuarios: " + e.getMessage());
+                    }
+                    break;
+                case 3:
+                    try {
+                        System.out.println("\n--- REPORTES GENERALES ---");
+                        System.out.println("Entregas registradas: " + sistema.verEntregas());
+                        System.out.println("Devoluciones registradas: " + sistema.verDevoluciones());
+                    } catch (Exception e) {
+                        System.out.println("Error al obtener reportes: " + e.getMessage());
+                    }
+                    break;
+                case 0:
+                    break;
+                default:
+                    System.out.println("Opción inválida.");
+            }
+        } while (opcionAdministrador != 0);
+    }
+
+    public static void menuGestionVehiculos(Scanner scanner, Sistema sistema) {
+        int opcionVehiculo;
+        do {
+            System.out.println("\n--- GESTIONAR VEHÍCULOS ---");
+            System.out.println("1. Agregar Auto al sistema");
+            System.out.println("2. Agregar Vehículo de Carga al sistema");
+            System.out.println("3. Actualizar precio por hora");
+            System.out.println("4. Actualizar rueda de auxilio (Auto)");
+            System.out.println("5. Actualizar precio por kg (Carga)");
+            System.out.println("6. Actualizar capacidad de carga");
+            System.out.println("7. Cambiar estado de vehículo");
+            System.out.println("8. Ver todos los vehículos");
+            System.out.println("9. Ver autos");
+            System.out.println("10. Ver vehículos de carga");
+            System.out.println("11. Listar disponibles");
+            System.out.println("12. Listar no disponibles");
+            System.out.println("13. Obtener vehículo por patente");
+            System.out.println("14. Consultar estado de vehículo");
+            System.out.println("0. Volver al menú anterior");
+            System.out.print("Seleccione una opción: ");
+
+            opcionVehiculo = scanner.nextInt();
+            scanner.nextLine();
+
+            try {
+                switch (opcionVehiculo) {
+                    case 1:
+                        System.out.print("Patente: ");
+                        String patA = scanner.nextLine();
+                        System.out.print("Marca: ");
+                        String marA = scanner.nextLine();
+                        System.out.print("Modelo: ");
+                        String modA = scanner.nextLine();
+                        System.out.print("Año: ");
+                        int anioA = scanner.nextInt();
+                        System.out.print("Kilometraje: ");
+                        double kmA = scanner.nextDouble();
+                        System.out.print("Precio por hora: ");
+                        double precA = scanner.nextDouble();
+                        System.out.print("Cantidad de puertas: ");
+                        int ptoA = scanner.nextInt();
+                        System.out.print("¿Tiene rueda de auxilio? (true/false): ");
+                        boolean auxA = scanner.nextBoolean();
+                        scanner.nextLine();
+
+                        sistema.agregarAutoAlSistema(patA, marA, modA, anioA, kmA, precA, ptoA, auxA);
+                        System.out.println("Auto agregado con exito.");
+                        break;
+                    case 2:
+                        System.out.print("Patente: ");
+                        String patCarga = scanner.nextLine();
+                        System.out.print("Marca: ");
+                        String marCarga = scanner.nextLine();
+                        System.out.print("Modelo: ");
+                        String modCarga = scanner.nextLine();
+                        System.out.print("Año: ");
+                        int anioCarga = scanner.nextInt();
+                        System.out.print("Kilometraje: ");
+                        double kmCarga = scanner.nextDouble();
+                        System.out.print("Precio por hora: ");
+                        double precCarga = scanner.nextDouble();
+                        System.out.print("Capacidad de carga (kg): ");
+                        double capCarga = scanner.nextDouble();
+                        System.out.print("Precio por kg: ");
+                        double precKgCarga = scanner.nextDouble();
+                        scanner.nextLine();
+
+                        sistema.agregarVehiculoDeCargaAlSistema(patCarga,marCarga,modCarga,anioCarga,kmCarga,precCarga,capCarga,precKgCarga);
+                        System.out.println("¡Vehículo de carga agregado con éxito!");
+                        break;
+                    case 3:
+                        System.out.print("Patente del vehículo: ");
+                        String patP = scanner.nextLine();
+                        System.out.print("Nuevo precio por hora: ");
+                        double nuevoPrecio = scanner.nextDouble();
+                        scanner.nextLine();
+                        sistema.actualizarPrecioPorHora(patP, nuevoPrecio);
+                        System.out.println("Precio actualizado.");
+                        break;
+                    case 4:
+                        System.out.print("Patente del auto: ");
+                        String patAux = scanner.nextLine();
+                        System.out.print("Tiene rueda de auxilio (true/false): ");
+                        boolean valAux = scanner.nextBoolean();
+                        scanner.nextLine();
+                        sistema.actualizarRuedaDeAuxilio(patAux, valAux);
+                        System.out.println("Rueda de auxilio actualizada.");
+                        break;
+                    case 5:
+                        System.out.print("Patente vehículo de carga: ");
+                        String patKg = scanner.nextLine();
+                        System.out.print("Nuevo precio por kg: ");
+                        double nuevoPrecKg = scanner.nextDouble();
+                        scanner.nextLine();
+                        sistema.actualizarPrecioPorKg(patKg, nuevoPrecKg);
+                        System.out.println("Precio por kg actualizado.");
+                        break;
+                    case 6:
+                        System.out.print("Patente vehículo de carga: ");
+                        String patCap = scanner.nextLine();
+                        System.out.print("Nueva capacidad (kg): ");
+                        double nuevaCap = scanner.nextDouble();
+                        scanner.nextLine();
+                        sistema.actualizarCapacidadDeCarga(patCap, nuevaCap);
+                        System.out.println("Capacidad de carga actualizada.");
+                        break;
+                    case 7:
+                        System.out.print("Patente: ");
+                        String patEstado = scanner.nextLine();
+                        System.out.print("Nuevo estado (DISPONIBLE, EN_REPARACION, EN_LIMPIEZA, FUERA_DE_SERVICIO): ");
+                        String estadoNew = scanner.nextLine().toUpperCase();//para que lo transforme a mayuscula si lo necesita
+                        sistema.cambiarEstadoVehiculo(patEstado, EstadoVehiculo.valueOf(estadoNew));
+                        System.out.println("Estado cambiado.");
+                        break;
+                    case 8:
+                        System.out.println(sistema.verVehiculos());
+                        break;
+                    case 9:
+                        System.out.println(sistema.verAutos());
+                        break;
+                    case 10:
+                        System.out.println(sistema.verVehiculosDeCarga());
+                        break;
+                    case 11:
+                        System.out.println(sistema.listarDisponibles());
+                        break;
+                    case 12:
+                        System.out.println(sistema.listarNoDisponibles());
+                        break;
+                    case 13:
+                        System.out.print("Patente a buscar: ");
+                        String patBuscada = scanner.nextLine();
+                        System.out.println(sistema.obtenerVehiculoPorPatente(patBuscada));
+                        break;
+                    case 14:
+                        System.out.print("Patente a consultar: ");
+                        String patConsulta = scanner.nextLine();
+                        System.out.println("Estado: " + sistema.consultarEstadoVehiculo(patConsulta));
+                        break;
+                    case 0:
+                        break;
+                    default:
+                        System.out.println("Opción inválida.");
+                }
+            } catch (Exception e) {
+                System.out.println("Error en gestión de vehículos: " + e.getMessage());
+            }
+        } while (opcionVehiculo != 0);
     }
 }
