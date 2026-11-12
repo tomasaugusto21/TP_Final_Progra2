@@ -42,5 +42,13 @@ public class VehiculoDeCarga extends Vehiculo{
 
         return (horas * getPrecioPorHora()) + (kgTransportados * precioPorKg);
     }
+
+    @Override
+    public String toString() {
+        return super.toString() +"VehiculoDeCarga{" +
+                "capacidadDeCargaKg=" + capacidadDeCargaKg +
+                ", precioPorKg=" + precioPorKg +
+                '}';
     }
+}
 

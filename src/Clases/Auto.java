@@ -44,4 +44,11 @@ public class Auto extends Vehiculo{
         return subtotal;
     }
 
+    @Override
+    public String toString() {
+        return super.toString() +"Auto{" +
+                "cantidadDePuertas=" + cantidadDePuertas +
+                ", ruedaDeAuxilio=" + ruedaDeAuxilio +
+                '}';
+    }
 }

@@ -41,4 +41,13 @@ public class Cliente extends Usuario{
     public void setDomicilio(String domicilio) {
         this.domicilio = domicilio;
     }
+
+    @Override
+    public String toString() {
+        return super.toString() +"Cliente{" +
+                "numeroDeLicencia='" + numeroDeLicencia + '\'' +
+                ", telefono='" + telefono + '\'' +
+                ", domicilio='" + domicilio + '\'' +
+                '}';
+    }
 }

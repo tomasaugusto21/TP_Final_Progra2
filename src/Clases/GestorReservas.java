@@ -340,7 +340,7 @@ public class GestorReservas {
             throw new ValidacionEx("La fecha no puede ser nula o estar en blanco");
         }
         if (hora == null || hora.isBlank()){
-            throw new ValidacionEx("La hoa no puede ser nula o estar en blanco");
+            throw new ValidacionEx("La hora no puede ser nula o estar en blanco");
         }
 
         try {
@@ -348,7 +348,7 @@ public class GestorReservas {
             LocalTime h = LocalTime.parse(hora, FORMATO_HORA);
             return LocalDateTime.of(f, h);
         } catch (DateTimeParseException e) {
-            throw new ValidacionEx("Fecha u hora inválida. Use dd/MM/aaaa y HH:mm");
+            throw new ValidacionEx("la fecha u hora es inválida. El formato correcto es: dd/MM/aaaa y HH:mm");
         }
     }
 

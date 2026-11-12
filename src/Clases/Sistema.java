@@ -226,11 +226,13 @@ public class Sistema {
         return gestorUsuarios.actualizarLegajo(id, nuevoLegajo);
     }
 
-    public boolean actualizarTelefonoCliente (int id, String nuevoTelefono) throws ValidacionEx, ObjetoInvalidoEx{
+    public boolean actualizarTelefonoCliente (int id, String nuevoTelefono) throws ValidacionEx, ObjetoInvalidoEx, PermisosEx {
+        exigirPropietario(id);
         return gestorUsuarios.actualizarTelefonoCliente(id, nuevoTelefono);
     }
 
-    public boolean actualizarDomicilioCliente (int id, String nuevoDomicilio) throws ObjetoInvalidoEx, ValidacionEx{
+    public boolean actualizarDomicilioCliente (int id, String nuevoDomicilio) throws ObjetoInvalidoEx, ValidacionEx, PermisosEx {
+        exigirPropietario(id);
         return gestorUsuarios.actualizarDomicilioCliente(id, nuevoDomicilio);
     }
 
@@ -296,7 +298,8 @@ public class Sistema {
 
     //metodos del gestor de reservas
 
-    public boolean crearReserva (int idCliente, int idVehiculo, String horaInicio, String horaFin, String fechaInicio, String fechaFin) throws ObjetoNoEncontradoEx, ObjetoInvalidoEx, ObjetoDuplicadoEx, ValidacionEx {
+    public boolean crearReserva (int idCliente, int idVehiculo, String horaInicio, String horaFin, String fechaInicio, String fechaFin) throws ObjetoNoEncontradoEx, ObjetoInvalidoEx, ObjetoDuplicadoEx, ValidacionEx, PermisosEx {
+        exigirPropietario(idCliente);
         return gestorReservas.crearReserva(idCliente, idVehiculo, horaInicio, horaFin, fechaInicio, fechaFin);
     }
 
@@ -338,7 +341,7 @@ public class Sistema {
         return gestorReservas.buscarReservaPorId(id);
     }
 
-    public boolean buscarCrucreDeFechas (String patente, LocalDateTime inicio, LocalDateTime fin) throws PermisosEx, ObjetoNoEncontradoEx, ValidacionEx, ObjetoInvalidoEx {
+    public boolean buscarCruceDeFechas (String patente, LocalDateTime inicio, LocalDateTime fin) throws PermisosEx, ObjetoNoEncontradoEx, ValidacionEx, ObjetoInvalidoEx {
 
         if (this.logueado.getRol() == RolDeUsuario.CLIENTE){
             throw new PermisosEx("Los clientes no tienen permiso para realizar esta accion");
@@ -373,6 +376,8 @@ public class Sistema {
     }
 
     public String listarReservaDeCliente (int id) throws ObjetoNoEncontradoEx, PermisosEx, ValidacionEx, ObjetoInvalidoEx {
+
+        exigirPropietario(id);
 
         Cliente c = gestorUsuarios.buscarCliente(id);
 
@@ -451,7 +456,7 @@ public class Sistema {
         Devolucion d = gestorAlquileres.buscarDevolucionPorId(id);
 
         if (d == null){
-            throw new ObjetoInvalidoEx("La entrega buscada no existe");
+            throw new ObjetoInvalidoEx("La devolucion buscada no existe");
         }
         return d.toString();
     }
@@ -517,6 +522,14 @@ public class Sistema {
             sb.append(d.toString()).append("\n");
         }
         return sb.toString();
+    }
+
+    private void exigirPropietario(int idCliente) throws PermisosEx {
+        if (logueado.getRol() == RolDeUsuario.CLIENTE &&
+                logueado.getID() != idCliente) {
+
+            throw new PermisosEx("Los clientes no pueden cambiar los datos de otros usuarios, solo pueden cambiar los suyos");
+        }
     }
 
 

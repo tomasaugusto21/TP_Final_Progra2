@@ -278,8 +278,10 @@ public class GestorUsuarios {
 
     private void validarUnico (Usuario nuevo) throws ObjetoDuplicadoEx {
 
-        if (usuarios.verificarExistencia(nuevo)){
-            throw new ObjetoDuplicadoEx("Ya existe un usuario con ese username");
+        for (Usuario u : usuarios.listarTodos()) {
+            if (u.getUsername().equalsIgnoreCase(nuevo.getUsername())) {
+                throw new ObjetoDuplicadoEx("Ya existe un usuario con ese username");
+            }
         }
 
         for (Usuario u : usuarios.listarTodos()){

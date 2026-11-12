@@ -95,4 +95,16 @@ public abstract class Usuario implements Identificable {
         return Objects.hashCode(username);
     }
 
+    @Override
+    public String toString() {
+        return "Usuario{" +
+                "id=" + id +
+                ", nombre='" + nombre + '\'' +
+                ", apellido='" + apellido + '\'' +
+                ", dni=" + dni +
+                ", email='" + email + '\'' +
+                ", username='" + username + '\'' +
+                ", rol=" + rol +
+                '}';
+    }
 }
