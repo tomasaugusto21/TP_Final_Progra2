@@ -38,6 +38,11 @@ public class Main {
                         String password = scanner.nextLine();
 
                         try {
+
+                            if (user.matches(".*\\d.*")) {
+                                throw new ValidacionEx("El username no puede contener números");
+                            }
+
                             sistema.loguearse(user, password);
                             System.out.println("¡Inicio de sesión exitoso!");
 
@@ -56,8 +61,7 @@ public class Main {
                             System.out.print("Apellido: ");
                             String apellido = scanner.nextLine();
                             System.out.print("DNI: ");
-                            String dni = scanner.nextString();
-                            scanner.nextLine();
+                            String dni = scanner.nextLine();
                             System.out.print("Email: ");
                             String email = scanner.nextLine();
                             System.out.print("Username: ");
@@ -148,7 +152,7 @@ public class Main {
     }
 
     public static void menuCliente(Scanner scanner, Sistema sistema) {
-        int opcionCliente;
+        int opcionCliente = -1;
         do {
             System.out.println("\n========== MENÚ CLIENTE ==========");
             System.out.println("1. Ver vehículos");
@@ -164,10 +168,16 @@ public class Main {
             System.out.println("0. Volver");
             System.out.print("Seleccione una opción: ");
 
-            opcionCliente = scanner.nextInt();
-            scanner.nextLine();
+            String opcion = scanner.nextLine();
 
             try {
+
+                if (!opcion.matches("\\d+")) {
+                    throw new ValidacionEx("La opción debe ser un número");
+                }
+
+                opcionCliente = Integer.parseInt(opcion);
+
                 switch (opcionCliente) {
                     case 1:
                         System.out.println(sistema.verVehiculos());
@@ -188,11 +198,13 @@ public class Main {
                         System.out.println(sistema.obtenerVehiculoPorPatente(patente));
                         break;
                     case 6:
-                        System.out.print("ID Cliente: ");
-                        int idCliente = scanner.nextInt();
                         System.out.print("ID Vehículo: ");
-                        int idVehiculo = scanner.nextInt();
-                        scanner.nextLine();
+                        String idV = scanner.nextLine();
+                        if (!idV.matches("\\d+")) {
+                            throw new ValidacionEx("El ID del vehículo debe contener números");
+                        }
+                        int idVehiculo = Integer.parseInt(idV);
+
                         System.out.print("Fecha Inicio (dd/MM/yyyy): ");
                         String fechaInicio = scanner.nextLine();
                         System.out.print("Hora Inicio (HH:mm): ");
@@ -201,6 +213,9 @@ public class Main {
                         String fechaFin = scanner.nextLine();
                         System.out.print("Hora Fin (HH:mm): ");
                         String horaFin = scanner.nextLine();
+
+
+                        int idCliente = sistema.getIdLogueado();
 
                         boolean creada = sistema.crearReserva(idCliente,idVehiculo,horaInicio,horaFin,fechaInicio,fechaFin);
 
@@ -211,15 +226,18 @@ public class Main {
                         }
                         break;
                     case 7:
-                        System.out.print("Ingrese su ID de cliente: ");
-                        int idClienteReserva = scanner.nextInt();
-                        scanner.nextLine();
+                        int idClienteReserva = sistema.getIdLogueado();
                         System.out.println(sistema.listarReservaDeCliente(idClienteReserva));
                         break;
                     case 8:
                         System.out.print("ID de la reserva a modificar: ");
-                        int idReserva = scanner.nextInt();
-                        scanner.nextLine();
+                        String idReservaString = scanner.nextLine();
+
+                        if (!idReservaString.matches("\\d+")){
+                            throw new ValidacionEx("El id de la reserva no debe contener letras");
+                        }
+
+                        int idReserva = Integer.parseInt(idReservaString);
 
                         System.out.println("¿Qué desea modificar?");
                         System.out.println("1. Hora de inicio");
@@ -227,8 +245,13 @@ public class Main {
                         System.out.println("3. Fecha de inicio");
                         System.out.println("4. Fecha de fin");
                         System.out.print("Seleccione una opción: ");
-                        int opcionAModificar = scanner.nextInt();
-                        scanner.nextLine();
+                        String opcionAModificarString = scanner.nextLine();
+
+                        if (!opcionAModificarString.matches("\\d+")){
+                            throw new ValidacionEx("Porfavor, ingrese una opcion valida entre (1-2-3-4)");
+                        }
+
+                        int opcionAModificar = Integer.parseInt(opcionAModificarString);
 
                         boolean modificacionOK = false;
 
@@ -264,22 +287,44 @@ public class Main {
                         }
                         break;
                     case 9:
-                        System.out.print("Ingrese su ID de cliente: ");
-                        int idClienteHistorial = scanner.nextInt();
-                        scanner.nextLine();
+                        int idClienteHistorial = sistema.getIdLogueado();
                         System.out.println(sistema.verHistorialDeClienteEntregas(idClienteHistorial));
                         break;
                     case 10:
-                        System.out.print("Ingrese su ID de cliente: ");
-                        int idClienteDatos = scanner.nextInt();
-                        scanner.nextLine();
-                        System.out.print("Nuevo teléfono: ");
-                        String nuevoTel = scanner.nextLine();
-                        boolean telefonoNuevoOK = sistema.actualizarTelefonoCliente(idClienteDatos, nuevoTel);
 
-                        System.out.print("Nuevo domicilio: ");
-                        String nuevoDomicilio = scanner.nextLine();
-                        boolean domicilioNuevoOK = sistema.actualizarDomicilioCliente(idClienteDatos, nuevoDomicilio);
+                        System.out.println("Seleccione la opcion que desee cambiar (1.Telefono/2.Domicilio)");
+                        String opcionTelDomString = scanner.nextLine();
+
+                        if (!opcionTelDomString.matches("\\d+")){
+                            throw new ValidacionEx("Se selecciono una opcion invalida. Por favor seleccione 1.Telefono o 2.Domicilio");
+                        }
+
+                        int opcionTelDom = Integer.parseInt(opcionTelDomString);
+
+                        boolean telefonoNuevoOK = false;
+                        boolean domicilioNuevoOK = false;
+
+                        int idClienteDatos = sistema.getIdLogueado();
+
+                        if (opcionTelDom == 1){
+
+                            System.out.print("Nuevo teléfono: ");
+                            String nuevoTel = scanner.nextLine();
+
+                            if (!nuevoTel.matches("\\d+")){
+                                throw new ValidacionEx("El nuevo telefono debe contener solo numeros");
+                            }
+
+                            telefonoNuevoOK = sistema.actualizarTelefonoCliente(idClienteDatos, nuevoTel);
+
+
+                        }else if (opcionTelDom == 2){
+
+                            System.out.print("Nuevo domicilio: ");
+                            String nuevoDomicilio = scanner.nextLine();
+                            domicilioNuevoOK = sistema.actualizarDomicilioCliente(idClienteDatos, nuevoDomicilio);
+
+                        }
 
                         if (telefonoNuevoOK || domicilioNuevoOK) {
                             System.out.println("Datos actualizados con éxito.");
@@ -292,7 +337,7 @@ public class Main {
                     default:
                         System.out.println("Opción inválida.");
                 }
-            } catch (Exception e) {
+            } catch (ObjetoNoEncontradoEx | ObjetoInvalidoEx | ObjetoDuplicadoEx | ValidacionEx | PermisosEx e) {
                 System.out.println("Error de ejecución: " + e.getMessage());
             }
         } while (opcionCliente != 0);
