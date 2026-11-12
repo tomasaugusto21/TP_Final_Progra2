@@ -533,4 +533,11 @@ public class Sistema {
     }
 
 
+    public RolDeUsuario getRolLogueado() {
+        return logueado.getRol(); }
+
+    public int getIdLogueado() {
+        return logueado.getID(); }
+
+    public void cerrarSesion() { logueado = null; }
 }
