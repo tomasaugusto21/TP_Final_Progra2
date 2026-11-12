@@ -2,6 +2,7 @@ package Clases;
 
 import Enums.EstadoReserva;
 import Enums.EstadoVehiculo;
+import Enums.RolDeUsuario;
 import Excepciones.*;
 
 import java.util.Scanner;
@@ -96,27 +97,28 @@ public class Main {
 
     public static void menuSegunRol(Scanner scanner, Sistema sistema) {
 
-        System.out.println("\n¿Qué menú desea desplegar?");
-        System.out.println("1. Menú Cliente");
-        System.out.println("2. Menú Empleado");
-        System.out.println("3. Menú Administrador");
-        System.out.print("Seleccione: ");
-        int tipo = scanner.nextInt();
-        scanner.nextLine();
+        RolDeUsuario rol = sistema.getRolLogueado(); //revisar
+        if (rol == null) {
+            System.out.println("No hay un rol válido asociado a la sesión.");
+            return;
+        }
 
-        switch (tipo) {
-            case 1:
+        switch (rol) {
+            case CLIENTE:
                 menuCliente(scanner, sistema);
                 break;
-            case 2:
+            case EMPLEADO:
                 menuEmpleado(scanner, sistema);
                 break;
-            case 3:
+            case ADMINISTRADOR:
                 menuAdministrador(scanner, sistema);
                 break;
             default:
-                System.out.println("Opción no válida.");
+                System.out.println("Rol desconocido.");
         }
+
+        sistema.cerrarSesion();//revisar
+        System.out.println("Sesión cerrada correctamente.");
     }
 
     public static void menuCliente(Scanner scanner, Sistema sistema) {
@@ -174,12 +176,12 @@ public class Main {
                         System.out.print("Hora Fin (HH:mm): ");
                         String horaFin = scanner.nextLine();
 
-                        boolean creada = sistema.crearReserva(idCliente,idVehiculo,fechaInicio,horaInicio,fechaFin,horaFin);
+                        boolean creada = sistema.crearReserva(idCliente,idVehiculo,horaInicio,horaFin,fechaInicio,fechaFin);
 
                         if (creada) {
                             System.out.println("Reserva creada con éxito.");
                         } else {
-                            System.out.println("No se pudo crear la reserva.");
+                            System.out.println("No se pudo crear la reserva (fecha u hora invalidas o auto no disponible)");
                         }
                         break;
                     case 7:
@@ -202,34 +204,37 @@ public class Main {
                         int opcionAModificar = scanner.nextInt();
                         scanner.nextLine();
 
-                        if (opcionAModificar == 1) {
-                            System.out.print("Ingrese la nueva hora de inicio (HH:mm): ");
-                            String nuevaHoraInicio = scanner.nextLine();
-                            sistema.actualizarHoraInicioReserva(idReserva, nuevaHoraInicio);
-                            System.out.println("Modificación de hora de inicio intentada.");
-                        } else {
-                            if (opcionAModificar == 2) {
+                        boolean modificacionOK = false;
+
+                        switch (opcionAModificar) {
+                            case 1:
+                                System.out.print("Ingrese la nueva hora de inicio (HH:mm): ");
+                                String nuevaHoraInicio = scanner.nextLine();
+                                modificacionOK = sistema.actualizarHoraInicioReserva(idReserva, nuevaHoraInicio);
+                                break;
+                            case 2:
                                 System.out.print("Ingrese la nueva hora de fin (HH:mm): ");
                                 String nuevaHoraFin = scanner.nextLine();
-                                sistema.actualizarHoraFinReserva(idReserva, nuevaHoraFin);
-                                System.out.println("Modificación de hora de fin intentada.");
-                            } else {
-                                if (opcionAModificar == 3) {
-                                    System.out.print("Ingrese la nueva fecha de inicio (dd/MM/yyyy): ");
-                                    String nuevaFechaInicio = scanner.nextLine();
-                                    sistema.actualizarFechaInicioReserva(idReserva, nuevaFechaInicio);
-                                    System.out.println("Modificación de fecha de inicio intentada.");
-                                } else {
-                                    if (opcionAModificar == 4) {
-                                        System.out.print("Ingrese la nueva fecha de fin (dd/MM/yyyy): ");
-                                        String nuevaFechaFin = scanner.nextLine();
-                                        sistema.actualizarFechaFinReserva(idReserva, nuevaFechaFin);
-                                        System.out.println("Modificación de fecha de fin intentada.");
-                                    } else {
-                                        System.out.println("Opción no válida.");
-                                    }
-                                }
-                            }
+                                modificacionOK = sistema.actualizarHoraFinReserva(idReserva, nuevaHoraFin);
+                                break;
+                            case 3:
+                                System.out.print("Ingrese la nueva fecha de inicio (dd/MM/yyyy): ");
+                                String nuevaFechaInicio = scanner.nextLine();
+                                modificacionOK = sistema.actualizarFechaInicioReserva(idReserva, nuevaFechaInicio);
+                                break;
+                            case 4:
+                                System.out.print("Ingrese la nueva fecha de fin (dd/MM/yyyy): ");
+                                String nuevaFechaFin = scanner.nextLine();
+                                modificacionOK = sistema.actualizarFechaFinReserva(idReserva, nuevaFechaFin);
+                                break;
+                            default:
+                                System.out.println("Opción no válida.");
+                        }
+
+                        if (modificacionOK) {
+                            System.out.println("Modificación realizada con éxito.");
+                        } else {
+                            System.out.println("No se pudo realizar la modificación.");
                         }
                         break;
                     case 9:
@@ -244,11 +249,17 @@ public class Main {
                         scanner.nextLine();
                         System.out.print("Nuevo teléfono: ");
                         String nuevoTel = scanner.nextLine();
-                        sistema.actualizarTelefonoCliente(idClienteDatos, nuevoTel);
+                        boolean telefonoNuevoOK = sistema.actualizarTelefonoCliente(idClienteDatos, nuevoTel);
+
                         System.out.print("Nuevo domicilio: ");
-                        String nuevoDom = scanner.nextLine();
-                        sistema.actualizarDomicilioCliente(idClienteDatos, nuevoDom);
-                        System.out.println("Datos actualizados.");
+                        String nuevoDomicilio = scanner.nextLine();
+                        boolean domicilioNuevoOK = sistema.actualizarDomicilioCliente(idClienteDatos, nuevoDomicilio);
+
+                        if (telefonoNuevoOK || domicilioNuevoOK) {
+                            System.out.println("Datos actualizados con éxito.");
+                        } else {
+                            System.out.println("No se pudieron actualizar los datos.");
+                        }
                         break;
                     case 0:
                         break;
@@ -266,25 +277,26 @@ public class Main {
             System.out.println("\n========== MENÚ EMPLEADO ==========");
             System.out.println("1. Ver vehículos");
             System.out.println("2. Ver vehículos disponibles");
-            System.out.println("3. Consultar vehículo");
-            System.out.println("4. Ver clientes");
-            System.out.println("5. Buscar cliente");
-            System.out.println("6. Ver reservas (Actualizar expiradas)");
-            System.out.println("7. Buscar cruce de fechas en vehículo");
-            System.out.println("8. Actualizar estado de reserva");
-            System.out.println("9. Actualizar reservas expiradas manualmente");
-            System.out.println("10. Registrar entrega");
-            System.out.println("11. Registrar devolución");
-            System.out.println("12. Ver entregas activas");
-            System.out.println("13. Ver todas las entregas");
-            System.out.println("14. Ver todas las devoluciones");
-            System.out.println("15. Modificar fecha de devolución prevista (Entrega)");
-            System.out.println("16. Actualizar empleado de entrega");
-            System.out.println("17. Actualizar empleado de devolución");
-            System.out.println("18. Cambiar estado de vehículo");
+            System.out.println("3. Ver vehículos no disponibles");
+            System.out.println("4. Consultar vehículo");
+            System.out.println("5. Ver clientes");
+            System.out.println("6. Buscar cliente");
+            System.out.println("7. Registrar un nuevo cliente");
+            System.out.println("8. Crear reserva para un cliente");
+            System.out.println("9. Ver reservas y actualizar expiradas");
+            System.out.println("10. Buscar cruce de fechas en vehículo");
+            System.out.println("11. Actualizar estado de reserva");
+            System.out.println("12. Registrar entrega");
+            System.out.println("13. Registrar devolución");
+            System.out.println("14. Ver entregas activas");
+            System.out.println("15. Ver todas las entregas");
+            System.out.println("16. Ver todas las devoluciones");
+            System.out.println("17. Modificar fecha de devolución prevista (Entrega)");
+            System.out.println("18. Actualizar empleado de entrega");
+            System.out.println("19. Actualizar empleado de devolución");
+            System.out.println("20. Cambiar estado de vehículo");
             System.out.println("0. Volver");
             System.out.print("Seleccione una opción: ");
-
             opcionEmpleado = scanner.nextInt();
             scanner.nextLine();
 
@@ -297,121 +309,185 @@ public class Main {
                         System.out.println(sistema.listarDisponibles());
                         break;
                     case 3:
+                        System.out.println(sistema.listarNoDisponibles());
+                    case 4:
                         System.out.print("Patente: ");
                         String pat = scanner.nextLine();
                         System.out.println(sistema.obtenerVehiculoPorPatente(pat));
                         break;
-                    case 4:
+                    case 5:
                         System.out.println(sistema.verClientes());
                         break;
-                    case 5:
+                    case 6:
                         System.out.print("ID del cliente a buscar: ");
                         int idClienteBuscado = scanner.nextInt();
                         scanner.nextLine();
                         System.out.println(sistema.buscarCliente(idClienteBuscado));
                         break;
-                    case 6:
-                        int cant = sistema.actualizarReservasExpiradas();
-                        System.out.println("Se actualizaron " + cant + " reservas expiradas.");
-                        break;
                     case 7:
-                        System.out.print("Patente del vehículo: ");
-                        String patVehiculo = scanner.nextLine();
-                        System.out.println("Función de cruce disponible a través de parámetros de fecha/hora.");
-                        break;
-                    case 8:
-                        System.out.print("ID Reserva: ");
-                        int idReserv = scanner.nextInt();
+                        System.out.println("\n--- REGISTRAR NUEVO CLIENTE ---");
+                        System.out.print("Nombre: ");
+                        String nom = scanner.nextLine();
+                        System.out.print("Apellido: ");
+                        String ape = scanner.nextLine();
+                        System.out.print("DNI: ");
+                        int dni = scanner.nextInt();
                         scanner.nextLine();
-                        System.out.print("Nuevo estado (VIGENTE, ANULADA, FINALIZADA, EXPIRADA): ");
-                        String estado = scanner.nextLine().toUpperCase();
-                        sistema.actualizarEstadoDeReserva(idReserv, EstadoReserva.valueOf(estado));
-                        System.out.println("Estado de reserva actualizado.");
+                        System.out.print("Email: ");
+                        String email = scanner.nextLine();
+                        System.out.print("Username: ");
+                        String username = scanner.nextLine();
+                        System.out.print("Nro de Licencia: ");
+                        String licencia = scanner.nextLine();
+                        System.out.print("Teléfono: ");
+                        String tel = scanner.nextLine();
+                        System.out.print("Domicilio: ");
+                        String dom = scanner.nextLine();
+                        System.out.print("Contraseña: ");
+                        String contra = scanner.nextLine();
+
+                    case 8:
+                        System.out.print("ID Cliente: ");
+                        int idC = scanner.nextInt();
+                        System.out.print("ID Vehículo: ");
+                        int idV = scanner.nextInt();
+                        scanner.nextLine();
+                        System.out.print("Fecha Inicio (dd/MM/yyyy): ");
+                        String fIni = scanner.nextLine();
+                        System.out.print("Hora Inicio (HH:mm): ");
+                        String hIni = scanner.nextLine();
+                        System.out.print("Fecha Fin (dd/MM/yyyy): ");
+                        String fFin = scanner.nextLine();
+                        System.out.print("Hora Fin (HH:mm): ");
+                        String hFin = scanner.nextLine();
+
+                        boolean creadaEmp = sistema.crearReserva(idC, idV, hIni, hFin, fIni, fFin);
+                        if (creadaEmp) {
+                            System.out.println("Reserva creada con éxito para el cliente.");
+                        } else {
+                            System.out.println("No se pudo crear la reserva.");
+                        }
                         break;
                     case 9:
                         int cantExpiradas = sistema.actualizarReservasExpiradas();
-                        System.out.println("Actualización manual: Se actualizaron " + cantExpiradas + " reservas expiradas.");
+                        System.out.println("Se actualizaron " + cantExpiradas + " reservas expiradas.");
                         break;
-                        case 10:
-                        System.out.print("ID Cliente: ");
-                        int clienteEntrega = scanner.nextInt();
-                        System.out.print("ID Vehículo: ");
-                        int vehiculoEntrega = scanner.nextInt();
-                        System.out.print("ID Empleado: ");
-                        int empleadoEntrega = scanner.nextInt();
-                        System.out.print("ID Reserva (0 si no tiene): ");
-                        int reservaEntrega = scanner.nextInt();
-                        scanner.nextLine();
-                        System.out.print("Fecha devolución prevista (yyyy-MM-dd HH:mm): ");
-                        String fDevPrevEntrega = scanner.nextLine();
-                        System.out.print("Kg transportados (0 si es auto): ");
-                        double kgTranspEntrega = scanner.nextDouble();
-                        scanner.nextLine();
-                        boolean entregaOK = sistema.registrarEntrega(clienteEntrega,vehiculoEntrega,empleadoEntrega,reservaEntrega,fDevPrevEntrega,kgTranspEntrega);
-                        if(entregaOK){
-                            System.out.println("Entrega registrada con exito.");
-                        }else{
-                            System.out.println("Error al registrar la entrega.");
-                        }
+                    case 10:
+                        System.out.print("Patente del vehículo: ");
+                        String pVeh = scanner.nextLine();
+                        System.out.println(sistema.consultarEstadoVehiculo(pVeh));
                         break;
                     case 11:
-                        System.out.print("ID Entrega: ");
-                        int idEntDevolucion = scanner.nextInt();
-                        System.out.print("ID Empleado: ");
-                        int idEmpDevolucion = scanner.nextInt();
-                        System.out.print("Kilometraje final: ");
-                        double kmFinDevolucion = scanner.nextDouble();
+                        System.out.print("ID Reserva: ");
+                        int idR = scanner.nextInt();
                         scanner.nextLine();
-                        boolean devolucionOK = sistema.registrarDevolucion(idEntDevolucion,idEmpDevolucion,kmFinDevolucion);
-                        if(devolucionOK){
-                            System.out.println("Devolucion registrada con exito.");
-                        }else{
-                            System.out.println("Error al registrar devolucion.");
+                        System.out.print("Nuevo estado (VIGENTE, ANULADA, FINALIZADA, EXPIRADA): ");
+                        String estStr = scanner.nextLine().toUpperCase();//para que sea si o si mayuscula
+                        boolean okEstRes = sistema.actualizarEstadoDeReserva(idR, EstadoReserva.valueOf(estStr));
+                        if (okEstRes){
+                            System.out.println("Estado de reserva actualizado.");
+                        } else {
+                            System.out.println("No se pudo actualizar el estado de la reserva.");
                         }
                         break;
                     case 12:
-                        System.out.println(sistema.listarEntregasActivas());
+                        System.out.print("ID Cliente: ");
+                        int cliEnt = scanner.nextInt();
+                        System.out.print("ID Vehículo: ");
+                        int vehEnt = scanner.nextInt();
+                        System.out.print("ID Empleado: ");
+                        int empEnt = scanner.nextInt();
+                        System.out.print("ID Reserva (0 si no tiene): ");
+                        int resEnt = scanner.nextInt();
+                        scanner.nextLine();
+                        System.out.print("Fecha devolución prevista (yyyy-MM-dd HH:mm): ");
+                        String fDevPrev = scanner.nextLine();
+                        System.out.print("Kg transportados (0 si es auto): ");
+                        double kgTrans = scanner.nextDouble();
+                        scanner.nextLine();
+
+                        boolean okEntrega = sistema.registrarEntrega(cliEnt, vehEnt, empEnt, resEnt, fDevPrev, kgTrans);
+                        if (okEntrega) {
+                            System.out.println("Entrega registrada con éxito.");
+                        } else {
+                            System.out.println("Error al registrar entrega.");
+                        }
                         break;
                     case 13:
-                        System.out.println(sistema.verEntregas());
+                        System.out.print("ID Entrega: ");
+                        int idEntDev = scanner.nextInt();
+                        System.out.print("ID Empleado: ");
+                        int idEmpDev = scanner.nextInt();
+                        System.out.print("Kilometraje final: ");
+                        double kmFin = scanner.nextDouble();
+                        scanner.nextLine();
+
+                        boolean okDevolucion = sistema.registrarDevolucion(idEntDev, idEmpDev, kmFin);
+                        if (okDevolucion) {
+                            System.out.println("Devolución registrada con éxito.");
+                        } else {
+                            System.out.println("Error al registrar devolución.");
+                        }
                         break;
                     case 14:
-                        System.out.println(sistema.verDevoluciones());
+                        System.out.println(sistema.listarEntregasActivas());
                         break;
                     case 15:
+                        System.out.println(sistema.verEntregas());
+                        break;
+                    case 16:
+                        System.out.println(sistema.verDevoluciones());
+                        break;
+                    case 17:
                         System.out.print("ID Entrega: ");
                         int idEntMod = scanner.nextInt();
                         scanner.nextLine();
                         System.out.print("Nueva fecha prevista (yyyy-MM-dd HH:mm): ");
                         String nuevaF = scanner.nextLine();
-                        sistema.actualizarFechaDevolucionPrevistaEntrega(idEntMod, nuevaF);
-                        System.out.println("Fecha prevista actualizada.");
+                        boolean okFechaPrevista = sistema.actualizarFechaDevolucionPrevistaEntrega(idEntMod, nuevaF);
+                        if (okFechaPrevista) {
+                            System.out.println("Fecha prevista actualizada.");
+                        }else {
+                            System.out.println("No se pudo actualizar la fecha.");
+                        }
                         break;
-                    case 16:
+                    case 18:
                         System.out.print("ID Entrega: ");
                         int idEntEmp = scanner.nextInt();
                         System.out.print("Nuevo ID Empleado: ");
                         int nuevoEmp = scanner.nextInt();
                         scanner.nextLine();
-                        sistema.actualizarEmpleadoDeEntrega(idEntEmp, nuevoEmp);
-                        System.out.println("Empleado de entrega actualizado.");
+                        boolean okEmpEnt = sistema.actualizarEmpleadoDeEntrega(idEntEmp, nuevoEmp);
+                        if (okEmpEnt){
+                            System.out.println("Empleado de entrega actualizado.");
+                        } else {
+                            System.out.println("Error al actualizar empleado.");
+                        }
                         break;
-                    case 17:
+                    case 19:
                         System.out.print("ID Devolución: ");
                         int idDevEmp = scanner.nextInt();
                         System.out.print("Nuevo ID Empleado: ");
                         int nuevoEmpDev = scanner.nextInt();
                         scanner.nextLine();
-                        sistema.actualizarEmpleadoDeDevolucion(idDevEmp, nuevoEmpDev);
-                        System.out.println("Empleado de devolución actualizado.");
+                        boolean okEmpDev = sistema.actualizarEmpleadoDeDevolucion(idDevEmp, nuevoEmpDev);
+                        if (okEmpDev){
+                            System.out.println("Empleado de devolución actualizado.");
+                        } else {
+                            System.out.println("Error al actualizar empleado.");
+                        }
                         break;
-                    case 18:
+                    case 20:
                         System.out.print("Patente del vehículo: ");
                         String patEst = scanner.nextLine();
                         System.out.print("Nuevo estado (DISPONIBLE, EN_REPARACION, EN_LIMPIEZA, FUERA_DE_SERVICIO): ");
                         String estVeh = scanner.nextLine().toUpperCase();
-                        sistema.cambiarEstadoVehiculo(patEst, EstadoVehiculo.valueOf(estVeh));
-                        System.out.println("Estado del vehículo modificado.");
+                        boolean okCambioEst = sistema.cambiarEstadoVehiculo(patEst, EstadoVehiculo.valueOf(estVeh));
+                        if (okCambioEst){
+                            System.out.println("Estado del vehículo modificado.");
+                        } else{
+                            System.out.println("No se pudo cambiar el estado del vehículo.");
+                        }
                         break;
                     case 0:
                         break;
@@ -562,8 +638,12 @@ public class Main {
                         double precKgCarga = scanner.nextDouble();
                         scanner.nextLine();
 
-                        sistema.agregarVehiculoDeCargaAlSistema(patCarga,marCarga,modCarga,anioCarga,kmCarga,precCarga,capCarga,precKgCarga);
-                        System.out.println("¡Vehículo de carga agregado con éxito!");
+                        boolean okCarga = sistema.agregarVehiculoDeCargaAlSistema(patCarga,marCarga,modCarga,anioCarga,kmCarga,precCarga,capCarga,precKgCarga);
+                        if (okCarga){
+                            System.out.println("¡Vehículo de carga agregado con éxito!");
+                        } else {
+                            System.out.println("No se pudo agregar el vehículo de carga.");
+                        }
                         break;
                     case 3:
                         System.out.print("Patente del vehículo: ");
@@ -571,8 +651,12 @@ public class Main {
                         System.out.print("Nuevo precio por hora: ");
                         double nuevoPrecio = scanner.nextDouble();
                         scanner.nextLine();
-                        sistema.actualizarPrecioPorHora(patP, nuevoPrecio);
-                        System.out.println("Precio actualizado.");
+                        boolean okPrecio = sistema.actualizarPrecioPorHora(patP,nuevoPrecio);
+                        if(okPrecio){
+                            System.out.println("Precio actualizado con exito.");
+                        }else{
+                            System.out.println(" no se pudo actualizar el precio.");
+                        }
                         break;
                     case 4:
                         System.out.print("Patente del auto: ");
@@ -580,8 +664,12 @@ public class Main {
                         System.out.print("Tiene rueda de auxilio (true/false): ");
                         boolean valAux = scanner.nextBoolean();
                         scanner.nextLine();
-                        sistema.actualizarRuedaDeAuxilio(patAux, valAux);
-                        System.out.println("Rueda de auxilio actualizada.");
+                        boolean okAuxiliar = sistema.actualizarRuedaDeAuxilio(patAux,valAux);
+                        if(okAuxiliar){
+                            System.out.println("Rueda de auxilio actualizada");
+                        }else{
+                            System.out.println("No se pudo actualizar.");
+                        }
                         break;
                     case 5:
                         System.out.print("Patente vehículo de carga: ");
@@ -589,8 +677,12 @@ public class Main {
                         System.out.print("Nuevo precio por kg: ");
                         double nuevoPrecKg = scanner.nextDouble();
                         scanner.nextLine();
-                        sistema.actualizarPrecioPorKg(patKg, nuevoPrecKg);
-                        System.out.println("Precio por kg actualizado.");
+                        boolean okPrecioCarga = sistema.actualizarPrecioPorKg(patKg,nuevoPrecKg);
+                        if(okPrecioCarga){
+                            System.out.println("Precio por carga actualizado.");
+                        }else{
+                            System.out.println("No se pudo actualizar.");
+                        }
                         break;
                     case 6:
                         System.out.print("Patente vehículo de carga: ");
@@ -598,16 +690,24 @@ public class Main {
                         System.out.print("Nueva capacidad (kg): ");
                         double nuevaCap = scanner.nextDouble();
                         scanner.nextLine();
-                        sistema.actualizarCapacidadDeCarga(patCap, nuevaCap);
-                        System.out.println("Capacidad de carga actualizada.");
+                        boolean okCapacidad = sistema.actualizarCapacidadDeCarga(patCap,nuevaCap);
+                        if(okCapacidad){
+                            System.out.println("Capacidad de carga actualizada");
+                        }else{
+                            System.out.println("No se pudo actualizar.");
+                        }
                         break;
                     case 7:
                         System.out.print("Patente: ");
                         String patEstado = scanner.nextLine();
                         System.out.print("Nuevo estado (DISPONIBLE, EN_REPARACION, EN_LIMPIEZA, FUERA_DE_SERVICIO): ");
                         String estadoNew = scanner.nextLine().toUpperCase();//para que lo transforme a mayuscula si lo necesita
-                        sistema.cambiarEstadoVehiculo(patEstado, EstadoVehiculo.valueOf(estadoNew));
-                        System.out.println("Estado cambiado.");
+                       boolean okCambioEstado = sistema.cambiarEstadoVehiculo(patEstado,EstadoVehiculo.valueOf(estadoNew));
+                       if(okCambioEstado){
+                           System.out.println("Estado cambiado con exito.");
+                       }else{
+                           System.out.println("No se pudo cambiar el estado.");
+                       }
                         break;
                     case 8:
                         System.out.println(sistema.verVehiculos());
