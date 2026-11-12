@@ -295,6 +295,9 @@ public class GestorUsuarios {
         if (password == null || password.isEmpty()) {
             throw new ValidacionEx("La contraseña es obligatoria y no puede ser nula ni estar en blanco");
         }
+        if (password.length() < 5){
+            throw new ValidacionEx("La contraseña debe tener una extension minima de 5 caracteres");
+        }
     }
 
 }

@@ -56,7 +56,7 @@ public class Main {
                             System.out.print("Apellido: ");
                             String apellido = scanner.nextLine();
                             System.out.print("DNI: ");
-                            int dni = scanner.nextInt();
+                            String dni = scanner.nextString();
                             scanner.nextLine();
                             System.out.print("Email: ");
                             String email = scanner.nextLine();
@@ -71,9 +71,35 @@ public class Main {
                             System.out.print("Contraseña: ");
                             String contra = scanner.nextLine();
 
-                            sistema.registrarse(nombre, apellido, dni, email, username, licencia, telefono, domicilio, contra);
+                            if (nombre.matches(".*\\d.*")) {
+                                throw new ValidacionEx("El nombre no puede contener números");
+                            }
+
+                            if (apellido.matches(".*\\d.*")) {
+                                throw new ValidacionEx("El apellido no puede contener números");
+                            }
+
+                            if (username.matches(".*\\d.*")) {
+                                throw new ValidacionEx("El username no puede contener números");
+                            }
+
+                            if (!dni.matches("\\d+")) {
+                                throw new ValidacionEx("El DNI solo puede contener números");
+                            }
+
+                            if (!telefono.matches("\\d+")) {
+                                throw new ValidacionEx("El teléfono solo puede contener números");
+                            }
+
+                            if (!licencia.matches("\\d+")) {
+                                throw new ValidacionEx("La licencia solo puede contener números");
+                            }
+
+                            int dniNumero = Integer.parseInt(dni);
+
+                            sistema.registrarse(nombre, apellido, dniNumero, email, username, licencia, telefono, domicilio, contra);
                             System.out.println("¡Cliente registrado con éxito!");
-                        } catch (Exception e) {
+                        } catch (ErrorDeCargaEx | ObjetoInvalidoEx | ObjetoDuplicadoEx | ValidacionEx e) {
                             System.out.println("Error al registrarse: " + e.getMessage());
                         }
                         break;
