@@ -387,6 +387,7 @@ public class Main {
                         break;
                     case 3:
                         System.out.println(sistema.listarNoDisponibles());
+                        break;
                     case 4:
                         System.out.print("Patente: ");
                         String pat = scanner.nextLine();
@@ -450,6 +451,7 @@ public class Main {
 
                         sistema.registrarse(nombre, apellido, dniNumero, email, username, licencia, telefono, domicilio, contra);
                         System.out.println("¡Cliente registrado con éxito!");
+                        break;
 
                     case 8:
                         System.out.print("ID Cliente: ");
@@ -719,8 +721,15 @@ public class Main {
                         int opcionVeh = Integer.parseInt(estVehString);
                         boolean okCambioEst = false;
 
-                        //TERMINARrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
-                        if(opc)
+                        if(opcionVeh == 1){
+                            okCambioEst = sistema.cambiarEstadoVehiculo(patEst,EstadoVehiculo.DISPONIBLE);
+                        }else if(opcionVeh == 2){
+                            okCambioEst = sistema.cambiarEstadoVehiculo(patEst,EstadoVehiculo.EN_REPARACION);
+                        }else if(opcionVeh == 3){
+                            okCambioEst = sistema.cambiarEstadoVehiculo(patEst,EstadoVehiculo.EN_LIMPIEZA);
+                        }else if(opcionVeh == 4){
+                            okCambioEst = sistema.cambiarEstadoVehiculo(patEst,EstadoVehiculo.FUERA_DE_SERVICIO);
+                        }
 
                         if (okCambioEst){
                             System.out.println("Estado del vehículo modificado.");
@@ -733,14 +742,14 @@ public class Main {
                     default:
                         System.out.println("Opción inválida.");
                 }
-            } catch (Exception e) {
+            } catch (ObjetoNoEncontradoEx | ObjetoInvalidoEx | ObjetoDuplicadoEx | ValidacionEx | PermisosEx | ErrorDeCargaEx e) {
                 System.out.println("Error de ejecución: " + e.getMessage());
             }
         } while (opcionEmpleado != 0);
     }
 
     public static void menuAdministrador(Scanner scanner, Sistema sistema) {
-        int opcionAdministrador;
+        int opcionAdministrador = -1;
         do {
             System.out.println("\n========== MENÚ ADMINISTRADOR ==========");
             System.out.println("1. Gestionar vehículos (Agregar autos/carga, actualizar precios)");
@@ -749,8 +758,7 @@ public class Main {
             System.out.println("0. Volver");
             System.out.print("Seleccione una opción: ");
 
-            opcionAdministrador = scanner.nextInt();
-            scanner.nextLine();
+           String opcionAdministradorString = scanner.nextLine();
 
             switch (opcionAdministrador) {
                 case 1:
@@ -762,36 +770,80 @@ public class Main {
                         System.out.println("1. Crear Empleado");
                         System.out.println("2. Ver Empleados");
                         System.out.println("3. Ver Clientes");
+
                         int opcionUsuario = scanner.nextInt();
                         scanner.nextLine();
 
                         if (opcionUsuario == 1) {
+
                             System.out.print("Nombre: ");
                             String name = scanner.nextLine();
+
+                            if (name.matches(".*\\d.*")) {
+                                throw new ValidacionEx("El nombre no puede contener números");
+                            }
+
                             System.out.print("Apellido: ");
                             String lastName = scanner.nextLine();
+
+                            if (lastName.matches(".*\\d.*")) {
+                                throw new ValidacionEx("El apellido no puede contener números");
+                            }
+
                             System.out.print("DNI: ");
-                            int dni = scanner.nextInt();
-                            scanner.nextLine();
+                            String dniTexto = scanner.nextLine();
+
+                            if (!dniTexto.matches("\\d+")) {
+                                throw new ValidacionEx("El DNI solo puede contener números");
+                            }
+
+                            int dni = Integer.parseInt(dniTexto);
+
                             System.out.print("Email: ");
                             String email = scanner.nextLine();
+
                             System.out.print("Username: ");
                             String username = scanner.nextLine();
+
+                            if (username.matches(".*\\d.*")) {
+                                throw new ValidacionEx("El username no puede contener números");
+                            }
+
                             System.out.print("Legajo: ");
                             String legajo = scanner.nextLine();
+
+                            if (!legajo.matches("\\d+")) {
+                                throw new ValidacionEx("El legajo solo puede contener números");
+                            }
+
                             System.out.print("Contraseña: ");
                             String password = scanner.nextLine();
 
-                            sistema.crearEmpleado(name,lastName,dni,email,username,legajo,password);
+                            sistema.crearEmpleado(name, lastName, dni, email, username, legajo, password);
+
                             System.out.println("¡Empleado creado con éxito!");
+
                         } else if (opcionUsuario == 2) {
+
                             System.out.println(sistema.verEmpleados());
+
                         } else if (opcionUsuario == 3) {
+
                             System.out.println(sistema.verClientes());
+
+                        } else {
+                            System.out.println("Opción inválida.");
                         }
+
+                    } catch (ValidacionEx e) {
+
+                        System.out.println("Error de validación: " + e.getMessage());
+
                     } catch (Exception e) {
+
                         System.out.println("Error en gestión de usuarios: " + e.getMessage());
                     }
+
                     break;
                 case 3:
                     try {
@@ -806,7 +858,8 @@ public class Main {
                     break;
                 default:
                     System.out.println("Opción inválida.");
-            }
+           }
+
         } while (opcionAdministrador != 0);
     }
 
@@ -839,21 +892,57 @@ public class Main {
                     case 1:
                         System.out.print("Patente: ");
                         String patA = scanner.nextLine();
+
                         System.out.print("Marca: ");
                         String marA = scanner.nextLine();
+
                         System.out.print("Modelo: ");
                         String modA = scanner.nextLine();
+
                         System.out.print("Año: ");
-                        int anioA = scanner.nextInt();
+                        String anio = scanner.nextLine();
+
+                        if (!anio.matches("\\d+")) {
+                            throw new ValidacionEx("El año solo puede contener números");
+                        }
+
+                        int anioA = Integer.parseInt(anio);
+
                         System.out.print("Kilometraje: ");
-                        double kmA = scanner.nextDouble();
+                        String km = scanner.nextLine();
+
+                        if (!km.matches("\\d+(\\.\\d+)?")) {
+                            throw new ValidacionEx("El kilometraje debe ser un número válido");
+                        }
+
+                        double kmA = Double.parseDouble(km);
+
                         System.out.print("Precio por hora: ");
-                        double precA = scanner.nextDouble();
+                        String precio = scanner.nextLine();
+
+                        if (!precio.matches("\\d+(\\.\\d+)?")) {
+                            throw new ValidacionEx("El precio por hora debe ser un número válido");
+                        }
+
+                        double precA = Double.parseDouble(precio);
+
                         System.out.print("Cantidad de puertas: ");
-                        int ptoA = scanner.nextInt();
+                        String puertas = scanner.nextLine();
+
+                        if (!puertas.matches("\\d+")) {
+                            throw new ValidacionEx("La cantidad de puertas debe contener números");
+                        }
+
+                        int ptoA = Integer.parseInt(puertas);
+
                         System.out.print("¿Tiene rueda de auxilio? (true/false): ");
-                        boolean auxA = scanner.nextBoolean();
-                        scanner.nextLine();
+                        String auxilio = scanner.nextLine();
+
+                        if (!auxilio.equalsIgnoreCase("true") && !auxilio.equalsIgnoreCase("false")) {
+                            throw new ValidacionEx("Debe ingresar true o false");
+                        }
+
+                        boolean auxA = Boolean.parseBoolean(auxilio);
 
                         sistema.agregarAutoAlSistema(patA, marA, modA, anioA, kmA, precA, ptoA, auxA);
                         System.out.println("Auto agregado con exito.");
@@ -861,21 +950,57 @@ public class Main {
                     case 2:
                         System.out.print("Patente: ");
                         String patCarga = scanner.nextLine();
+
                         System.out.print("Marca: ");
                         String marCarga = scanner.nextLine();
+
                         System.out.print("Modelo: ");
                         String modCarga = scanner.nextLine();
+
                         System.out.print("Año: ");
-                        int anioCarga = scanner.nextInt();
+                        String Anio = scanner.nextLine();
+
+                        if (!Anio.matches("\\d+")) {
+                            throw new ValidacionEx("El año solo puede contener números");
+                        }
+
+                        int anioCarga = Integer.parseInt(Anio);
+
                         System.out.print("Kilometraje: ");
-                        double kmCarga = scanner.nextDouble();
+                        String kilometraje = scanner.nextLine();
+
+                        if (!kilometraje.matches("\\d+(\\.\\d+)?")) {
+                            throw new ValidacionEx("El kilometraje debe ser un número válido");
+                        }
+
+                        double kmCarga = Double.parseDouble(kilometraje);
+
                         System.out.print("Precio por hora: ");
-                        double precCarga = scanner.nextDouble();
+                        String precioCarga = scanner.nextLine();
+
+                        if (!precioCarga.matches("\\d+(\\.\\d+)?")) {
+                            throw new ValidacionEx("El precio por hora debe ser un número válido");
+                        }
+
+                        double precCarga = Double.parseDouble(precioCarga);
+
                         System.out.print("Capacidad de carga (kg): ");
-                        double capCarga = scanner.nextDouble();
+                        String capacidad = scanner.nextLine();
+
+                        if (!capacidad.matches("\\d+(\\.\\d+)?")) {
+                            throw new ValidacionEx("La capacidad de carga debe ser un número válido");
+                        }
+
+                        double capCarga = Double.parseDouble(capacidad);
+
                         System.out.print("Precio por kg: ");
-                        double precKgCarga = scanner.nextDouble();
-                        scanner.nextLine();
+                        String precioKg = scanner.nextLine();
+
+                        if (!precioKg.matches("\\d+(\\.\\d+)?")) {
+                            throw new ValidacionEx("El precio por kg debe ser un número válido");
+                        }
+
+                        double precKgCarga = Double.parseDouble(precioKg);
 
                         boolean okCarga = sistema.agregarVehiculoDeCargaAlSistema(patCarga,marCarga,modCarga,anioCarga,kmCarga,precCarga,capCarga,precKgCarga);
                         if (okCarga){
@@ -913,9 +1038,15 @@ public class Main {
                     case 5:
                         System.out.print("Patente vehículo de carga: ");
                         String patKg = scanner.nextLine();
+
                         System.out.print("Nuevo precio por kg: ");
-                        double nuevoPrecKg = scanner.nextDouble();
-                        scanner.nextLine();
+                        String precioKilo = scanner.nextLine();
+
+                        if (!precioKilo.matches("\\d+(\\.\\d+)?")) {
+                            throw new ValidacionEx("El precio por kg debe ser un número válido");
+                        }
+
+                        double nuevoPrecKg = Double.parseDouble(precioKilo);
                         boolean okPrecioCarga = sistema.actualizarPrecioPorKg(patKg,nuevoPrecKg);
                         if(okPrecioCarga){
                             System.out.println("Precio por carga actualizado.");
@@ -939,10 +1070,26 @@ public class Main {
                     case 7:
                         System.out.print("Patente: ");
                         String patEstado = scanner.nextLine();
-                        System.out.print("Nuevo estado (DISPONIBLE, EN_REPARACION, EN_LIMPIEZA, FUERA_DE_SERVICIO): ");
-                        String estadoNew = scanner.nextLine().toUpperCase();//para que lo transforme a mayuscula si lo necesita
-                       boolean okCambioEstado = sistema.cambiarEstadoVehiculo(patEstado,EstadoVehiculo.valueOf(estadoNew));
-                       if(okCambioEstado){
+                        System.out.print("Nuevo estado (1.DISPONIBLE 2.EN_REPARACION 3.EN_LIMPIEZA 4.FUERA_DE_SERVICIO): ");
+                        String estadoNew = scanner.nextLine();
+
+                        if(!estadoNew.matches("\\d+")){
+                            throw new ValidacionEx("Opcion invalida. Porfavor ingrese un numero (1,2,3,4)");
+                        }
+
+                        int opcionVehicu = Integer.parseInt(estadoNew);
+                        boolean okCambioEstado = false;
+
+                        if(opcionVehicu == 1){
+                            okCambioEstado = sistema.cambiarEstadoVehiculo(patEstado,EstadoVehiculo.DISPONIBLE);
+                        }else if(opcionVehicu == 2){
+                            okCambioEstado = sistema.cambiarEstadoVehiculo(patEstado,EstadoVehiculo.EN_REPARACION);
+                        } else if(opcionVehicu == 3){
+                            okCambioEstado = sistema.cambiarEstadoVehiculo(patEstado,EstadoVehiculo.EN_LIMPIEZA);
+                        }else if(opcionVehicu == 4){
+                            okCambioEstado = sistema.cambiarEstadoVehiculo(patEstado,EstadoVehiculo.FUERA_DE_SERVICIO);
+                        }
+                        if(okCambioEstado){
                            System.out.println("Estado cambiado con exito.");
                        }else{
                            System.out.println("No se pudo cambiar el estado.");
@@ -978,7 +1125,7 @@ public class Main {
                     default:
                         System.out.println("Opción inválida.");
                 }
-            } catch (Exception e) {
+            } catch (ObjetoNoEncontradoEx | ObjetoInvalidoEx | ObjetoDuplicadoEx | ValidacionEx | PermisosEx e) {
                 System.out.println("Error en gestión de vehículos: " + e.getMessage());
             }
         } while (opcionVehiculo != 0);
