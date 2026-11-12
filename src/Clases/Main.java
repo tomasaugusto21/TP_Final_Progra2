@@ -343,7 +343,7 @@ public class Main {
         } while (opcionCliente != 0);
     }
     public static void menuEmpleado(Scanner scanner, Sistema sistema) {
-        int opcionEmpleado;
+        int opcionEmpleado = -1;
         do {
             System.out.println("\n========== MENÚ EMPLEADO ==========");
             System.out.println("1. Ver vehículos");
@@ -368,10 +368,16 @@ public class Main {
             System.out.println("20. Cambiar estado de vehículo");
             System.out.println("0. Volver");
             System.out.print("Seleccione una opción: ");
-            opcionEmpleado = scanner.nextInt();
-            scanner.nextLine();
+            String opcionEmpleadoString = scanner.nextLine();
 
             try {
+
+                if (!opcionEmpleadoString.matches("\\d+")){
+                    throw new ValidacionEx("La opcion debe ser un numero.");
+                }
+
+                opcionEmpleado = Integer.parseInt(opcionEmpleadoString);
+
                 switch (opcionEmpleado) {
                     case 1:
                         System.out.println(sistema.verVehiculos());
@@ -396,14 +402,13 @@ public class Main {
                         System.out.println(sistema.buscarCliente(idClienteBuscado));
                         break;
                     case 7:
-                        System.out.println("\n--- REGISTRAR NUEVO CLIENTE ---");
+                        System.out.println("\n--- REGISTRO NUEVO CLIENTE ---");
                         System.out.print("Nombre: ");
-                        String nom = scanner.nextLine();
+                        String nombre = scanner.nextLine();
                         System.out.print("Apellido: ");
-                        String ape = scanner.nextLine();
+                        String apellido = scanner.nextLine();
                         System.out.print("DNI: ");
-                        int dni = scanner.nextInt();
-                        scanner.nextLine();
+                        String dni = scanner.nextLine();
                         System.out.print("Email: ");
                         String email = scanner.nextLine();
                         System.out.print("Username: ");
@@ -411,24 +416,71 @@ public class Main {
                         System.out.print("Nro de Licencia: ");
                         String licencia = scanner.nextLine();
                         System.out.print("Teléfono: ");
-                        String tel = scanner.nextLine();
+                        String telefono = scanner.nextLine();
                         System.out.print("Domicilio: ");
-                        String dom = scanner.nextLine();
+                        String domicilio = scanner.nextLine();
                         System.out.print("Contraseña: ");
                         String contra = scanner.nextLine();
 
+                        if (nombre.matches(".*\\d.*")) {
+                            throw new ValidacionEx("El nombre no puede contener números");
+                        }
+
+                        if (apellido.matches(".*\\d.*")) {
+                            throw new ValidacionEx("El apellido no puede contener números");
+                        }
+
+                        if (username.matches(".*\\d.*")) {
+                            throw new ValidacionEx("El username no puede contener números");
+                        }
+
+                        if (!dni.matches("\\d+")) {
+                            throw new ValidacionEx("El DNI solo puede contener números");
+                        }
+
+                        if (!telefono.matches("\\d+")) {
+                            throw new ValidacionEx("El teléfono solo puede contener números");
+                        }
+
+                        if (!licencia.matches("\\d+")) {
+                            throw new ValidacionEx("La licencia solo puede contener números");
+                        }
+
+                        int dniNumero = Integer.parseInt(dni);
+
+                        sistema.registrarse(nombre, apellido, dniNumero, email, username, licencia, telefono, domicilio, contra);
+                        System.out.println("¡Cliente registrado con éxito!");
+
                     case 8:
                         System.out.print("ID Cliente: ");
-                        int idC = scanner.nextInt();
+                        String idCliente = scanner.nextLine();
+
+                        if (!idCliente.matches("\\d+")) {
+                            throw new ValidacionEx("El ID del cliente solo puede contener números");
+                        }
+
+                        int idC = Integer.parseInt(idCliente);
+
+
                         System.out.print("ID Vehículo: ");
-                        int idV = scanner.nextInt();
-                        scanner.nextLine();
+                        String idVehiculo = scanner.nextLine();
+
+                        if (!idVehiculo.matches("\\d+")) {
+                            throw new ValidacionEx("El ID del vehículo solo puede contener números");
+                        }
+
+                        int idV = Integer.parseInt(idVehiculo);
+
+
                         System.out.print("Fecha Inicio (dd/MM/yyyy): ");
                         String fIni = scanner.nextLine();
+
                         System.out.print("Hora Inicio (HH:mm): ");
                         String hIni = scanner.nextLine();
+
                         System.out.print("Fecha Fin (dd/MM/yyyy): ");
                         String fFin = scanner.nextLine();
+
                         System.out.print("Hora Fin (HH:mm): ");
                         String hFin = scanner.nextLine();
 
@@ -452,9 +504,27 @@ public class Main {
                         System.out.print("ID Reserva: ");
                         int idR = scanner.nextInt();
                         scanner.nextLine();
-                        System.out.print("Nuevo estado (VIGENTE, ANULADA, FINALIZADA, EXPIRADA): ");
-                        String estStr = scanner.nextLine().toUpperCase();//para que sea si o si mayuscula
-                        boolean okEstRes = sistema.actualizarEstadoDeReserva(idR, EstadoReserva.valueOf(estStr));
+                        System.out.print("Nuevo estado (1.VIGENTE 2.ANULADA 3.FINALIZADA 4.EXPIRADA): ");
+                        String estStr = scanner.nextLine();
+
+                        if (!estStr.matches("\\d+")) {
+                            throw new ValidacionEx("Opcion invalida. Por favor seleccione una entre (1, 2, 3, 4)");
+                        }
+
+                        int opcionEstado = Integer.parseInt(estStr);
+
+                        boolean okEstRes = false;
+
+                        if (opcionEstado == 1){
+                            okEstRes = sistema.actualizarEstadoDeReserva(idR, EstadoReserva.VIGENTE);
+                        }else if (opcionEstado == 2){
+                            okEstRes = sistema.actualizarEstadoDeReserva(idR, EstadoReserva.ANULADA);
+                        }else if(opcionEstado == 3){
+                            okEstRes = sistema.actualizarEstadoDeReserva(idR,EstadoReserva.FINALIZADA);
+                        }else if(opcionEstado == 4){
+                            okEstRes = sistema.actualizarEstadoDeReserva(idR,EstadoReserva.EXPIRADA);
+                        }
+
                         if (okEstRes){
                             System.out.println("Estado de reserva actualizado.");
                         } else {
@@ -463,19 +533,57 @@ public class Main {
                         break;
                     case 12:
                         System.out.print("ID Cliente: ");
-                        int cliEnt = scanner.nextInt();
+                        String cli = scanner.nextLine();
+
+                        if (!cli.matches("\\d+")) {
+                            throw new ValidacionEx("El ID del cliente solo puede contener números");
+                        }
+
+                        int cliEnt = Integer.parseInt(cli);
+
+
                         System.out.print("ID Vehículo: ");
-                        int vehEnt = scanner.nextInt();
+                        String veh = scanner.nextLine();
+
+                        if (!veh.matches("\\d+")) {
+                            throw new ValidacionEx("El ID del vehículo solo puede contener números");
+                        }
+
+                        int vehEnt = Integer.parseInt(veh);
+
+
                         System.out.print("ID Empleado: ");
-                        int empEnt = scanner.nextInt();
+                        String emp = scanner.nextLine();
+
+                        if (!emp.matches("\\d+")) {
+                            throw new ValidacionEx("El ID del empleado solo puede contener números");
+                        }
+
+                        int empEnt = Integer.parseInt(emp);
+
+
                         System.out.print("ID Reserva (0 si no tiene): ");
-                        int resEnt = scanner.nextInt();
-                        scanner.nextLine();
+                        String res = scanner.nextLine();
+
+                        if (!res.matches("\\d+")) {
+                            throw new ValidacionEx("El ID de reserva solo puede contener números");
+                        }
+
+                        int resEnt = Integer.parseInt(res);
+
+
                         System.out.print("Fecha devolución prevista (yyyy-MM-dd HH:mm): ");
                         String fDevPrev = scanner.nextLine();
+
+
                         System.out.print("Kg transportados (0 si es auto): ");
-                        double kgTrans = scanner.nextDouble();
-                        scanner.nextLine();
+                        String kg = scanner.nextLine();
+
+                        if (!kg.matches("\\d+(\\.\\d+)?")) {
+                            throw new ValidacionEx("Los kilogramos deben ser un número válido");
+                        }
+
+                        double kgTrans = Double.parseDouble(kg);
 
                         boolean okEntrega = sistema.registrarEntrega(cliEnt, vehEnt, empEnt, resEnt, fDevPrev, kgTrans);
                         if (okEntrega) {
@@ -486,12 +594,33 @@ public class Main {
                         break;
                     case 13:
                         System.out.print("ID Entrega: ");
-                        int idEntDev = scanner.nextInt();
+                        String idEntrega = scanner.nextLine();
+
+                        if (!idEntrega.matches("\\d+")) {
+                            throw new ValidacionEx("El ID de entrega solo puede contener números");
+                        }
+
+                        int idEntDev = Integer.parseInt(idEntrega);
+
+
                         System.out.print("ID Empleado: ");
-                        int idEmpDev = scanner.nextInt();
+                        String idEmpleado = scanner.nextLine();
+
+                        if (!idEmpleado.matches("\\d+")) {
+                            throw new ValidacionEx("El ID del empleado solo puede contener números");
+                        }
+
+                        int idEmpDev = Integer.parseInt(idEmpleado);
+
+
                         System.out.print("Kilometraje final: ");
-                        double kmFin = scanner.nextDouble();
-                        scanner.nextLine();
+                        String km = scanner.nextLine();
+
+                        if (!km.matches("\\d+(\\.\\d+)?")) {
+                            throw new ValidacionEx("El kilometraje debe ser un número válido");
+                        }
+
+                        double kmFin = Double.parseDouble(km);
 
                         boolean okDevolucion = sistema.registrarDevolucion(idEntDev, idEmpDev, kmFin);
                         if (okDevolucion) {
@@ -511,8 +640,12 @@ public class Main {
                         break;
                     case 17:
                         System.out.print("ID Entrega: ");
-                        int idEntMod = scanner.nextInt();
-                        scanner.nextLine();
+                        String idEntModString = scanner.nextLine();
+
+                        if (!idEntModString.matches("\\d+")){
+                            throw new ValidacionEx("El id de la entrega debe ser un numero.");
+                        }
+                        int idEntMod = Integer.parseInt(idEntModString);
                         System.out.print("Nueva fecha prevista (yyyy-MM-dd HH:mm): ");
                         String nuevaF = scanner.nextLine();
                         boolean okFechaPrevista = sistema.actualizarFechaDevolucionPrevistaEntrega(idEntMod, nuevaF);
@@ -524,10 +657,23 @@ public class Main {
                         break;
                     case 18:
                         System.out.print("ID Entrega: ");
-                        int idEntEmp = scanner.nextInt();
+                        String idEntregaString = scanner.nextLine();
+
+                        if (!idEntregaString.matches("\\d+")) {
+                            throw new ValidacionEx("El ID de entrega solo puede contener números");
+                        }
+
+                        int idEntEmp = Integer.parseInt(idEntregaString);
+
+
                         System.out.print("Nuevo ID Empleado: ");
-                        int nuevoEmp = scanner.nextInt();
-                        scanner.nextLine();
+                        String nuevoEmpleado = scanner.nextLine();
+
+                        if (!nuevoEmpleado.matches("\\d+")) {
+                            throw new ValidacionEx("El nuevo ID de empleado solo puede contener números");
+                        }
+
+                        int nuevoEmp = Integer.parseInt(nuevoEmpleado);
                         boolean okEmpEnt = sistema.actualizarEmpleadoDeEntrega(idEntEmp, nuevoEmp);
                         if (okEmpEnt){
                             System.out.println("Empleado de entrega actualizado.");
@@ -537,10 +683,23 @@ public class Main {
                         break;
                     case 19:
                         System.out.print("ID Devolución: ");
-                        int idDevEmp = scanner.nextInt();
+                        String idDevolucion = scanner.nextLine();
+
+                        if (!idDevolucion.matches("\\d+")) {
+                            throw new ValidacionEx("El ID de devolución solo puede contener números");
+                        }
+
+                        int idDevEmp = Integer.parseInt(idDevolucion);
+
+
                         System.out.print("Nuevo ID Empleado: ");
-                        int nuevoEmpDev = scanner.nextInt();
-                        scanner.nextLine();
+                        String nuevoEmpleadoString = scanner.nextLine();
+
+                        if (!nuevoEmpleadoString.matches("\\d+")) {
+                            throw new ValidacionEx("El nuevo ID de empleado solo puede contener números");
+                        }
+
+                        int nuevoEmpDev = Integer.parseInt(nuevoEmpleadoString);
                         boolean okEmpDev = sistema.actualizarEmpleadoDeDevolucion(idDevEmp, nuevoEmpDev);
                         if (okEmpDev){
                             System.out.println("Empleado de devolución actualizado.");
@@ -551,9 +710,18 @@ public class Main {
                     case 20:
                         System.out.print("Patente del vehículo: ");
                         String patEst = scanner.nextLine();
-                        System.out.print("Nuevo estado (DISPONIBLE, EN_REPARACION, EN_LIMPIEZA, FUERA_DE_SERVICIO): ");
-                        String estVeh = scanner.nextLine().toUpperCase();
-                        boolean okCambioEst = sistema.cambiarEstadoVehiculo(patEst, EstadoVehiculo.valueOf(estVeh));
+                        System.out.print("Nuevo estado (1.DISPONIBLE 2.EN_REPARACION 3.EN_LIMPIEZA 4.FUERA_DE_SERVICIO): ");
+                        String estVehString = scanner.nextLine();
+
+                        if(!estVehString.matches("\\d+")){
+                            throw new ValidacionEx("Opcion invalida. Porfavor seleccione una opcion entre (1,2,3,4)");
+                        }
+                        int opcionVeh = Integer.parseInt(estVehString);
+                        boolean okCambioEst = false;
+
+                        //TERMINARrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
+                        if(opc)
+
                         if (okCambioEst){
                             System.out.println("Estado del vehículo modificado.");
                         } else{
