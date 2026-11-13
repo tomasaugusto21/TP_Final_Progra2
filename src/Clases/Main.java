@@ -754,7 +754,7 @@ public class Main {
             System.out.println("\n========== MENÚ ADMINISTRADOR ==========");
             System.out.println("1. Gestionar vehículos (Agregar autos/carga, actualizar precios)");
             System.out.println("2. Gestionar usuarios (Crear empleado, ver empleados/clientes)");
-            System.out.println("3. Ver reportes generales de reservas y entregas");
+            System.out.println("3. Ver reportes generales de reservas, entregas y devoluciones");
             System.out.println("0. Volver");
             System.out.print("Seleccione una opción: ");
 
@@ -856,6 +856,7 @@ public class Main {
                 case 3:
                     try {
                         System.out.println("\n--- REPORTES GENERALES ---");
+                        System.out.println("Reservas registradas: " + sistema.verReservas());
                         System.out.println("Entregas registradas: " + sistema.verEntregas());
                         System.out.println("Devoluciones registradas: " + sistema.verDevoluciones());
                     } catch (Exception e) {
