@@ -45,6 +45,9 @@ public class GestorUsuarios {
         if (telefono == null || telefono.isBlank()){
             throw new ValidacionEx("El telefono del cliente no puede ser nulo o estar en blanco");
         }
+        if (!telefono.matches("\\d{10,11}")) {
+            throw new ValidacionEx("El teléfono debe tener entre 10 y 11 dígitos.");
+        }
         if (domicilio == null || domicilio.isBlank()){
             throw new ValidacionEx("El domicilio del cliente no puede ser nulo o estar en blanco");
         }
@@ -211,6 +214,10 @@ public class GestorUsuarios {
 
         if (nuevoTelefono == null || nuevoTelefono.isBlank()){
             throw new ValidacionEx("El nuevo telefono no puede ser nulo ni estar en blanco");
+        }
+
+        if (!nuevoTelefono.matches("\\d{10,11}")) {
+            throw new ValidacionEx("El teléfono debe tener entre 10 y 11 dígitos.");
         }
 
         Usuario buscado = buscarPorId(id);

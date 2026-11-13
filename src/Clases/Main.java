@@ -765,12 +765,8 @@ public class Main {
                 if (!opcionAdministradorString.matches("\\d+")) {
                     throw new ValidacionEx("La opción debe ser un número.");
                 }
-            } catch (ValidacionEx e) {
-                System.out.println("Error: " +e.getMessage());
-            }
 
             opcionAdministrador = Integer.parseInt(opcionAdministradorString);
-
 
             switch (opcionAdministrador) {
                 case 1:
@@ -847,9 +843,9 @@ public class Main {
                             System.out.println("Opción inválida.");
                         }
 
-                    } catch (ValidacionEx e) {
+                    } catch (PermisosEx | ErrorDeCargaEx | ObjetoInvalidoEx | ObjetoDuplicadoEx | ValidacionEx e) {
 
-                        System.out.println("Error de validación: " + e.getMessage());
+                        System.out.println("Error: " + e.getMessage());
 
                     } catch (Exception e) {
 
@@ -870,15 +866,17 @@ public class Main {
                     break;
                 default:
                     System.out.println("Opción inválida.");
-           }
+                }
 
-
+            }catch (ValidacionEx e) {
+                    System.out.println("Error de ejecución: " + e.getMessage());
+                }
 
         } while (opcionAdministrador != 0);
     }
 
     public static void menuGestionVehiculos(Scanner scanner, Sistema sistema) {
-        int opcionVehiculo;
+        int opcionVehiculo = -1;
         do {
             System.out.println("\n--- GESTIONAR VEHÍCULOS ---");
             System.out.println("1. Agregar Auto al sistema");
@@ -900,17 +898,14 @@ public class Main {
 
             String opcionVehiculoString = scanner.nextLine();
 
-            try{
+            try {
+
                 if (!opcionVehiculoString.matches("\\d+")){
                     throw new ValidacionEx("La opción debe ser un número.");
                 }
-            } catch (ValidacionEx e) {
-                System.out.println("Error:" + e.getMessage());
-            }
 
-            opcionVehiculo = Integer.parseInt(opcionVehiculoString);
+                opcionVehiculo = Integer.parseInt(opcionVehiculoString);
 
-            try {
                 switch (opcionVehiculo) {
                     case 1:
                         System.out.print("Patente: ");

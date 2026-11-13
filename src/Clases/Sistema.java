@@ -358,7 +358,7 @@ public class Sistema {
         }
     }
 
-    public boolean buscarCrucreDeFechas (String patente, LocalDateTime inicio, LocalDateTime fin, int idReservaAIgnorar) throws PermisosEx, ObjetoNoEncontradoEx, ValidacionEx, ObjetoInvalidoEx {
+    public boolean buscarCruceDeFechas (String patente, LocalDateTime inicio, LocalDateTime fin, int idReservaAIgnorar) throws PermisosEx, ObjetoNoEncontradoEx, ValidacionEx, ObjetoInvalidoEx {
 
         if (this.logueado.getRol() == RolDeUsuario.CLIENTE){
             throw new PermisosEx("Los clientes no tienen permiso para realizar esta accion");
