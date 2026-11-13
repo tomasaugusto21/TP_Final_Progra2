@@ -496,6 +496,11 @@ public class Main {
                     case 9:
                         int cantExpiradas = sistema.actualizarReservasExpiradas();
                         System.out.println("Se actualizaron " + cantExpiradas + " reservas expiradas.");
+                        try{
+                            System.out.println("ver reservas: " + sistema.verReservas());
+                        } catch (PermisosEx e) {
+                            System.out.println("Error de permisos: " + e.getMessage());
+                        }
                         break;
                     case 10:
                         System.out.print("Patente del vehículo: ");
