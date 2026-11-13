@@ -760,6 +760,18 @@ public class Main {
 
            String opcionAdministradorString = scanner.nextLine();
 
+
+            try{
+                if (!opcionAdministradorString.matches("\\d+")) {
+                    throw new ValidacionEx("La opción debe ser un número.");
+                }
+            } catch (ValidacionEx e) {
+                System.out.println("Error: " +e.getMessage());
+            }
+
+            opcionAdministrador = Integer.parseInt(opcionAdministradorString);
+
+
             switch (opcionAdministrador) {
                 case 1:
                     menuGestionVehiculos(scanner, sistema);
@@ -860,6 +872,8 @@ public class Main {
                     System.out.println("Opción inválida.");
            }
 
+
+
         } while (opcionAdministrador != 0);
     }
 
@@ -884,8 +898,17 @@ public class Main {
             System.out.println("0. Volver al menú anterior");
             System.out.print("Seleccione una opción: ");
 
-            opcionVehiculo = scanner.nextInt();
-            scanner.nextLine();
+            String opcionVehiculoString = scanner.nextLine();
+
+            try{
+                if (!opcionVehiculoString.matches("\\d+")){
+                    throw new ValidacionEx("La opción debe ser un número.");
+                }
+            } catch (ValidacionEx e) {
+                System.out.println("Error:" + e.getMessage());
+            }
+
+            opcionVehiculo = Integer.parseInt(opcionVehiculoString);
 
             try {
                 switch (opcionVehiculo) {
