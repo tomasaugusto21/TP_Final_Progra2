@@ -27,8 +27,7 @@ public class Empleado extends Usuario{
 
     @Override
     public String toString() {
-        return super.toString() + "Empleado{" +
-                "legajo='" + legajo + '\'' +
-                '}';
+        return super.toString().replace("Usuario:", "Empleado:") +
+                " | Legajo: " + legajo;
     }
 }

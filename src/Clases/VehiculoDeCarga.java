@@ -45,10 +45,9 @@ public class VehiculoDeCarga extends Vehiculo{
 
     @Override
     public String toString() {
-        return super.toString() +"VehiculoDeCarga{" +
-                "capacidadDeCargaKg=" + capacidadDeCargaKg +
-                ", precioPorKg=" + precioPorKg +
-                '}';
+        return super.toString().replace("Vehículo:", "Vehículo de carga:") +
+                " | Capacidad de carga: " + capacidadDeCargaKg + " kg" +
+                " | Precio por kg: $" + precioPorKg;
     }
 }
 

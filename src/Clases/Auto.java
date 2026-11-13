@@ -46,9 +46,8 @@ public class Auto extends Vehiculo{
 
     @Override
     public String toString() {
-        return super.toString() +"Auto{" +
-                "cantidadDePuertas=" + cantidadDePuertas +
-                ", ruedaDeAuxilio=" + ruedaDeAuxilio +
-                '}';
+        return super.toString().replace("Vehículo:", "Auto:") +
+                " | Puertas: " + cantidadDePuertas +
+                " | Rueda de auxilio: " + (ruedaDeAuxilio ? "Sí" : "No");
     }
 }

@@ -77,14 +77,13 @@ public class Devolucion {
 
     @Override
     public String toString() {
-        return "Devolucion{" +
-                "id=" + id +
-                ", idEntrega=" + idEntrega +
-                ", idEmpleado=" + idEmpleado +
-                ", fechaHoraDevolucion=" + fechaHoraDevolucion +
-                ", kmRecorridos=" + kmRecorridos +
-                ", costoTotal=" + costoTotal +
-                '}';
+        return "Devolución: " +
+                "ID: " + id +
+                " | Entrega: " + idEntrega +
+                " | Empleado: " + idEmpleado +
+                " | Fecha y hora de devolución: " + fechaHoraDevolucion.toLocalDate() + " " + fechaHoraDevolucion.toLocalTime() +
+                " | KM recorridos: " + kmRecorridos +
+                " | Costo total: $" + costoTotal;
     }
 
     @Override

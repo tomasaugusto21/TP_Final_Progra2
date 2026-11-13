@@ -87,16 +87,13 @@ public abstract class Vehiculo implements Identificable {
 
     @Override
     public String toString() {
-        return "Vehiculo{" +
-                "id=" + id +
-                ", patente='" + patente + '\'' +
-                ", marca='" + marca + '\'' +
-                ", modelo='" + modelo + '\'' +
-                ", año=" + anio +
-                ", kilometraje=" + kilometraje +
-                ", precioPorHora=" + precioPorHora +
-                ", estadoVehiculo=" + estadoVehiculo +
-                '}';
+        return "Vehículo: " +
+                "ID: " + id +
+                " | " + marca + " " + modelo + " (" + anio + ")" +
+                " | Patente: " + patente +
+                " | KM: " + kilometraje +
+                " | Precio: $" + precioPorHora + "/h" +
+                " | Estado: " + estadoVehiculo;
     }
 
     @Override

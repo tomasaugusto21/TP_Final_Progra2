@@ -110,17 +110,16 @@ public class Reserva implements Identificable {
 
     @Override
     public String toString() {
-        return "Reserva{" +
-                "id=" + id +
-                ", idCliente=" + idCliente +
-                ", idVehiculo=" + idVehiculo +
-                ", horaInicio=" + horaInicio +
-                ", horaFin=" + horaFin +
-                ", fechaInicio=" + fechaInicio +
-                ", fechaFin=" + fechaFin +
-                ", estado=" + estado +
-                ", fechaCreacion=" + fechaCreacion +
-                '}';
+        return "Reserva: " +
+                "ID: " + id +
+                " | Cliente: " + idCliente +
+                " | Vehículo: " + idVehiculo +
+                " | Fecha de inicio: " + fechaInicio.toLocalDate() +
+                " | Hora de inicio: " + horaInicio.toLocalTime() +
+                " | Fecha de fin: " + fechaFin.toLocalDate() +
+                " | Hora de fin: " + horaFin.toLocalTime() +
+                " | Estado: " + estado +
+                " | Creación: " + fechaCreacion.toLocalDate();
     }
 
     @Override

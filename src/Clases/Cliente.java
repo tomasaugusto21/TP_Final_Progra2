@@ -44,10 +44,9 @@ public class Cliente extends Usuario{
 
     @Override
     public String toString() {
-        return super.toString() +"Cliente{" +
-                "numeroDeLicencia='" + numeroDeLicencia + '\'' +
-                ", telefono='" + telefono + '\'' +
-                ", domicilio='" + domicilio + '\'' +
-                '}';
+        return super.toString().replace("Usuario:", "Cliente:") +
+                " | Licencia: " + numeroDeLicencia +
+                " | Teléfono: " + telefono +
+                " | Domicilio: " + domicilio;
     }
 }

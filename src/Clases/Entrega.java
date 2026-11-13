@@ -99,18 +99,17 @@ public class Entrega {
 
     @Override
     public String toString() {
-        return "Entrega{" +
-                "id=" + id +
-                ", idCliente=" + idCliente +
-                ", idVehiculo=" + idVehiculo +
-                ", idEmpleado=" + idEmpleado +
-                ", idReserva=" + idReserva +
-                ", fechaHoraEntrega=" + fechaHoraEntrega +
-                ", fechaDevolucionPrevista=" + fechaDevolucionPrevista +
-                ", kmEntrega=" + kmEntrega +
-                ", kgTransportados=" + kgTransportados +
-                ", activa=" + activa +
-                '}';
+        return "Entrega: " +
+                "ID: " + id +
+                " | Cliente: " + idCliente +
+                " | Vehículo: " + idVehiculo +
+                " | Empleado: " + idEmpleado +
+                " | Reserva: " + (idReserva == 0 ? "Sin reserva" : idReserva) +
+                " | Fecha y hora de entrega: " + fechaHoraEntrega.toLocalDate() + " " + fechaHoraEntrega.toLocalTime() +
+                " | Devolución prevista: " + fechaDevolucionPrevista.toLocalDate() + " " + fechaDevolucionPrevista.toLocalTime() +
+                " | KM iniciales: " + kmEntrega +
+                " | KG transportados: " + kgTransportados +
+                " | Activa: " + (activa ? "Sí" : "No");
     }
 
 
