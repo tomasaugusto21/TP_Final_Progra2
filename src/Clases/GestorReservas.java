@@ -333,6 +333,10 @@ public class GestorReservas {
         return resultado;
     }
 
+    public List<Reserva> listarReservas (){
+        return this.reservas.listarTodos();
+    }
+
 
     private LocalDateTime leerFechaHora(String fecha, String hora) throws ValidacionEx {
 

@@ -392,6 +392,22 @@ public class Sistema {
         return sb.toString();
     }
 
+    public String verReservas () throws PermisosEx {
+
+        if (this.logueado.getRol() == RolDeUsuario.CLIENTE){
+            throw new PermisosEx("Los clientes no tienen permiso para realizar esta accion");
+        }
+
+        StringBuilder sb = new StringBuilder();
+
+        List<Reserva> reservas = gestorReservas.listarReservas();
+
+        for (Reserva r : reservas){
+            sb.append(r.toString()).append("\n");
+        }
+        return sb.toString();
+    }
+
 
 
 
